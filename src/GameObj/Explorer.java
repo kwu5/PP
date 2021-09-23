@@ -9,7 +9,8 @@ public class Explorer extends GameObj{
     private int x,y;
     private int imgWidth, imgHeight;
 
-    private BufferedImage exImg;
+    private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
+    private BufferedImage exCurrentImg;
 
     private Rectangle exRect;
 
@@ -18,7 +19,7 @@ public class Explorer extends GameObj{
     private boolean leftPressed, rightPressed, upPressed, downPressed;
     private boolean moveUp, moveDown, moveLeft, moveRight;
 
-    public Explorer(int x, int y, BufferedImage ex){
+    public Explorer(int x, int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight){
         this.x = x;
         this.y = y;
 
@@ -27,9 +28,14 @@ public class Explorer extends GameObj{
         this.moveLeft = false;
         this.moveRight = false;
 
-        this.exImg = ex;
-        this.imgHeight = ex.getHeight();
-        this.imgWidth = ex.getWidth();
+        this.exCurrentImg = exDownImg;
+        this.exUpImg = exUp;
+        this.exDownImg = exDown;
+        this.exLeftImg = exLeft;
+        this.exRightImg = exRight;
+
+        this.imgHeight = exUpImg.getHeight();
+        this.imgWidth = exUpImg.getWidth();
 
         this.exRect = new Rectangle(x,y,imgWidth,imgHeight);
 
@@ -79,42 +85,48 @@ public class Explorer extends GameObj{
         if(leftPressed){
             this.moveLeft();
             moveLeft = true;
+            this.exCurrentImg = exLeftImg;
         }
         if(rightPressed){
             this.moveRight();
             moveRight = true;
+            this.exCurrentImg = exRightImg;
         }
         if(upPressed){
             this.moveUp();
             moveUp = true;
+            this.exCurrentImg = exUpImg;
         }
         if(downPressed){
             this.moveDown();
             moveDown = true;
+            this.exCurrentImg = exDownImg;
         }
 
     }
 
 
     private void moveUp(){
-        y+=2.5;
+        y-=2;
     }
-
     private void moveDown(){
-        y+=2.5;
+        y+=2;
     }
     private void moveLeft(){
-        x-=2.5;
+        x-=2;
     }
     private void moveRight(){
-        x+=2.5;
+        x+=2;
     }
 
+    public int getX(){return x;};
+    public int getY(){return y;};
 
-    void drawImage(Graphics g) {
-        AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
+
+    public void drawImage(Graphics g) {
+
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(this.exImg, rotation, null);
+        g2d.drawImage(exCurrentImg,x,y, null);
     }
 
 

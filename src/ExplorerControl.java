@@ -32,15 +32,29 @@ public class ExplorerControl implements KeyListener {
         int keyPressed = e.getKeyCode();
         if (keyPressed == left) {
             this.explorer.toggleLeftPressed();
+            this.explorer.unToggleRightPressed();
+            this.explorer.unToggleUpPressed();
+            this.explorer.unToggleDownPressed();
+
         }
         if (keyPressed == right) {
             this.explorer.toggleRightPressed();
+            this.explorer.unToggleLeftPressed();
+            this.explorer.unToggleUpPressed();
+            this.explorer.unToggleDownPressed();
         }
         if (keyPressed == up) {
             this.explorer.toggleUpPressed();
+            this.explorer.unToggleLeftPressed();
+            this.explorer.unToggleDownPressed();
+            this.explorer.unToggleRightPressed();
         }
         if (keyPressed == down) {
             this.explorer.toggleDownPressed();
+            this.explorer.unToggleUpPressed();
+            this.explorer.unToggleLeftPressed();
+            this.explorer.unToggleRightPressed();
+
         }
 
     }

@@ -2,6 +2,7 @@ import GameObj.Explorer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +28,17 @@ public class GameWorld extends JPanel {
     private JFrame jf;
     private Player player;
     private Explorer explorer;
+    private ExplorerControl explorerControl;
+
 
     private BufferedImage world;
     private Image background ;
     private BufferedImage explorerUp, explorerDown,explorerLeft,explorerRight;
+    private BufferedImage beetleUp, beetleDown,mummyDown, mummyLeft,mummyRight,mummyUp, scorpionLeft, scorpionRight;
+    private BufferedImage block, blockHor,blockVert,wall1, wall2, door;
+    private BufferedImage sword, scroll,treasure1, treasure2, potion,scarab;
+    private BufferedImage lives,buttonHelp,buttonLoad,buttonQuit, buttonScores, buttonStart;
+
 
     private int tileHeight, tileWidth;
 
@@ -44,7 +52,7 @@ public class GameWorld extends JPanel {
         //todo update game state
         try {
             while(true) {
-                gameWorld.explorer.update();
+                gameWorld.player.update();
                 gameWorld.repaint();
                 Thread.sleep(1000 / 144);
             }
@@ -66,19 +74,50 @@ public class GameWorld extends JPanel {
         try{
             //import image
             background = read(new File("resources/Background2.bmp"));
-            explorerUp = read(new File("resources/Explorer_up"));
-            explorerDown = read(new File("resources/Explorer_down"));
-            explorerRight = read(new File("resources/Explorer_right"));
-            explorerLeft = read(new File("resources/Explorer_left"));
+            explorerUp = read(new File("resources/Explorer_up.gif"));
+            explorerDown = read(new File("resources/Explorer_down.gif"));
+            explorerRight = read(new File("resources/Explorer_right.gif"));
+            explorerLeft = read(new File("resources/Explorer_left.gif"));
+
+            beetleDown = read(new File("resources/Beetle_down.gif"));
+            beetleUp = read(new File("resources/Beetle_up.gif"));
+            mummyDown = read(new File("resources/Mummy_down.gif"));
+            mummyUp = read(new File("resources/Mummy_up.gif"));
+            mummyLeft = read(new File("resources/Mummy_left.gif"));
+            mummyRight = read(new File("resources/Mummy_right.gif"));
+            scorpionLeft = read(new File("resources/Scorpion_left.gif"));
+            scorpionRight = read(new File("resources/Scorpion_right.gif"));
+
+            block = read(new File("resources/Block.gif"));
+            blockHor = read(new File("resources/Block_hor.gif"));
+            blockVert = read(new File("resources/Block_vert.gif"));
+            wall1 = read(new File("resources/Wall1.gif"));
+            wall2 = read(new File("resources/Wall2.gif"));
+
+            door = read(new File("resources/Door.gif"));
+            lives= read(new File("resources/Lives.gif"));
+            potion = read(new File("resources/Potion.gif"));
+            scarab = read(new File("resources/Scarab.gif"));
+            scroll = read(new File("resources/Scroll.gif"));
+            sword = read(new File("resources/Sword.gif"));
+            treasure1 = read(new File("resources/Treasure1.gif"));
+            treasure2 = read(new File("resources/Treasure2.gif"));
+
+            buttonHelp = read(new File("resources/Button_help.gif"));
+            buttonLoad = read(new File("resources/Button_load.gif"));
+            buttonStart= read(new File("resources/Button_start.gif"));
+            buttonQuit = read(new File("resources/Button_quit.gif"));
+            buttonScores = read(new File("resources/Button_scores.gif"));
 
 
 
 
-            player = new Player();
 
 
-
-
+            player = new Player(explorerUp,explorerDown,explorerLeft,explorerRight);
+            explorer = player.getExplorer();
+            explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP,KeyEvent.VK_DOWN,KeyEvent.VK_LEFT,
+                    KeyEvent.VK_RIGHT);
 
 
         }catch (IOException io){
@@ -90,6 +129,8 @@ public class GameWorld extends JPanel {
 
         this.jf.setLayout(new BorderLayout());
         this.jf.add(this);
+
+        this.jf.addKeyListener(explorerControl);
 
         this.jf.setSize(SCREEN_WIDTH , SCREEN_HEIGHT);
         this.jf.setResizable(false);
@@ -104,6 +145,24 @@ public class GameWorld extends JPanel {
 
 
     }
+
+    private int GetSubWorldX( Explorer explorer, BufferedImage explorerImg){
+        int explorerX = explorer.getX() + explorerLeft.getWidth()/2;
+        if (explorerX - SCREEN_WIDTH/4 <= 0)    return 0;
+        else if(explorerX + SCREEN_WIDTH/4 >= GAME_WIDTH)  return GAME_WIDTH - SCREEN_WIDTH/2;
+        else return explorerX - SCREEN_WIDTH/4;
+    }
+
+    private int GetSubWorldY( Explorer explorer, BufferedImage explorerImg){
+        int explorerY = explorer.getY() + explorerLeft.getHeight()/2;
+        if (explorerY - SCREEN_HEIGHT/2 <= 0)    return 0;
+        else if(explorerY + SCREEN_HEIGHT/2 >= GAME_WIDTH)  return GAME_HEIGHT - SCREEN_HEIGHT;
+        else return explorerY - SCREEN_HEIGHT/2;
+    }
+
+
+
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -117,8 +176,22 @@ public class GameWorld extends JPanel {
 //        buffer.drawImage(background, 20, 20, null);
 
 
+        //keep the explorer insight
+        int subworldX, subworldY;
+        subworldX = GetSubWorldX(explorer, explorerUp);
+        subworldY = GetSubWorldY(explorer, explorerDown);
+        BufferedImage worldSeen = world.getSubimage(subworldX,subworldY,SCREEN_WIDTH,SCREEN_HEIGHT);
 
-        g2.drawImage(world, 0, 0, null);
+
+
+        g2.drawImage(worldSeen, 0, 0, null);
+        explorer.drawImage(g2);
+
+
+
+
+
+
 
 
 
