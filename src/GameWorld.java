@@ -1,4 +1,8 @@
 import GameObj.Explorer;
+import GameObj.Monsters.Beetles;
+import GameObj.Monsters.Monsters;
+import GameObj.PowerUpObj.PowerUpObj;
+import GameObj.Walls.Walls;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,8 +23,9 @@ public class GameWorld extends JPanel {
     private static final int SCREEN_WIDTH = 1024;
     private static final int SCREEN_HEIGHT = 720;
 
-    //todo
-    private BufferedImage obj;
+    //todo  test field
+    private Beetles b1;
+
 
     private final String map1 ="resources/map1.csv";
 
@@ -29,6 +34,7 @@ public class GameWorld extends JPanel {
     private Player player;
     private Explorer explorer;
     private ExplorerControl explorerControl;
+    private float explorerSpeed = 2.2f;         //set explorerSpeed
 
 
     private BufferedImage world;
@@ -38,6 +44,10 @@ public class GameWorld extends JPanel {
     private BufferedImage block, blockHor,blockVert,wall1, wall2, door;
     private BufferedImage sword, scroll,treasure1, treasure2, potion,scarab;
     private BufferedImage lives,buttonHelp,buttonLoad,buttonQuit, buttonScores, buttonStart;
+
+    private ArrayList<Monsters> monsters = new ArrayList<>();
+    private ArrayList<PowerUpObj> powerUpObjs = new ArrayList<>();
+    private ArrayList<Walls> walls = new ArrayList<>();
 
 
     private int tileHeight, tileWidth;
@@ -49,10 +59,19 @@ public class GameWorld extends JPanel {
         GameWorld gameWorld = new GameWorld();
         gameWorld.init();
 
-        //todo update game state
         try {
             while(true) {
+
+                //todo update item state
                 gameWorld.player.update();
+
+                for (Monsters m: gameWorld.monsters) {
+                    m.update();
+                }
+
+
+
+
                 gameWorld.repaint();
                 Thread.sleep(1000 / 144);
             }
@@ -114,10 +133,17 @@ public class GameWorld extends JPanel {
 
 
 
-            player = new Player(explorerUp,explorerDown,explorerLeft,explorerRight);
+            player = new Player(explorerUp,explorerDown,explorerLeft,explorerRight,explorerSpeed);
             explorer = player.getExplorer();
             explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP,KeyEvent.VK_DOWN,KeyEvent.VK_LEFT,
                     KeyEvent.VK_RIGHT);
+
+
+            //todo test filed
+            b1 = new Beetles(250,100,beetleUp,beetleDown);
+            monsters.add(b1);
+
+
 
 
         }catch (IOException io){
@@ -182,10 +208,29 @@ public class GameWorld extends JPanel {
         subworldY = GetSubWorldY(explorer, explorerDown);
         BufferedImage worldSeen = world.getSubimage(subworldX,subworldY,SCREEN_WIDTH,SCREEN_HEIGHT);
 
+        explorer.drawImage(buffer,explorer.getCurrImg());
+
+        //test field todo
+        for (Monsters m: monsters) {
+            m.drawImage(buffer,m.getCurrImg());
+        }
+
 
 
         g2.drawImage(worldSeen, 0, 0, null);
-        explorer.drawImage(g2);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

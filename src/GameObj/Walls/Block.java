@@ -6,8 +6,8 @@ public class Block extends Walls{
 
 
 
-    public Block(){
-
+    Block(int x, int y){
+        super(x,y);
     }
 
 

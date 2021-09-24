@@ -5,11 +5,13 @@ import java.awt.image.BufferedImage;
 
 public class Player {
 
-    public Explorer explorer ;
+    private Explorer explorer ;
+
 //    private BufferedImage exImg;
 
-    public Player(BufferedImage exUpImg, BufferedImage exDownImg, BufferedImage exLeftImg, BufferedImage exRightImg){
-        this.explorer = new Explorer(50,20,exUpImg, exDownImg, exLeftImg ,exRightImg);
+    public Player(BufferedImage exUpImg, BufferedImage exDownImg, BufferedImage exLeftImg, BufferedImage exRightImg,
+                  float speed){
+        this.explorer = new Explorer(245,100,exUpImg, exDownImg, exLeftImg ,exRightImg,speed);  //todo  default loc
     }
 
     public Explorer getExplorer(){

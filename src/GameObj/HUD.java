@@ -1,8 +1,14 @@
 package GameObj;
 
 public class HUD extends GameObj{
-    @Override
-    public void update() {
 
+
+
+    public void update() {
     }
+
+    HUD(int x, int y){
+        super(x,y);
+    }
+
 }

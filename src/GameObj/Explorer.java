@@ -6,11 +6,13 @@ import java.awt.image.BufferedImage;
 
 public class Explorer extends GameObj{
 
-    private int x,y;
-    private int imgWidth, imgHeight;
 
-    private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
-    private BufferedImage exCurrentImg;
+
+    private int imgWidth, imgHeight;
+    private float speed;
+
+    private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg,currImg;
+
 
     private Rectangle exRect;
 
@@ -19,16 +21,18 @@ public class Explorer extends GameObj{
     private boolean leftPressed, rightPressed, upPressed, downPressed;
     private boolean moveUp, moveDown, moveLeft, moveRight;
 
-    public Explorer(int x, int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight){
-        this.x = x;
-        this.y = y;
+    public Explorer( int x,int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight,
+    float speed){
+        super(x,y);
+
+        this.speed =speed;
 
         this.moveDown = false;
         this.moveUp = false;
         this.moveLeft = false;
         this.moveRight = false;
 
-        this.exCurrentImg = exDownImg;
+        this.currImg = exDownImg;
         this.exUpImg = exUp;
         this.exDownImg = exDown;
         this.exLeftImg = exLeft;
@@ -85,49 +89,51 @@ public class Explorer extends GameObj{
         if(leftPressed){
             this.moveLeft();
             moveLeft = true;
-            this.exCurrentImg = exLeftImg;
+            this.currImg = exLeftImg;
         }
         if(rightPressed){
             this.moveRight();
             moveRight = true;
-            this.exCurrentImg = exRightImg;
+            this.currImg = exRightImg;
         }
         if(upPressed){
             this.moveUp();
             moveUp = true;
-            this.exCurrentImg = exUpImg;
+            this.currImg = exUpImg;
         }
         if(downPressed){
             this.moveDown();
             moveDown = true;
-            this.exCurrentImg = exDownImg;
+            this.currImg = exDownImg;
         }
 
     }
 
 
     private void moveUp(){
-        y-=2;
+        y-=speed;
     }
     private void moveDown(){
-        y+=2;
+        y+=speed;
     }
     private void moveLeft(){
-        x-=2;
+        x-=speed;
     }
     private void moveRight(){
-        x+=2;
+        x+=speed;
     }
 
     public int getX(){return x;};
     public int getY(){return y;};
+    public BufferedImage getCurrImg(){return currImg;};
 
+//    @Override
+//    public void drawImage(Graphics g){
+//        Graphics2D g2d= (Graphics2D) g;
+////        System.out.println(x + "   "+y);
+//        g2d.drawImage(currImg,x,y,null );
+//    }
 
-    public void drawImage(Graphics g) {
-
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(exCurrentImg,x,y, null);
-    }
 
 
 }
