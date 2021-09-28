@@ -1,9 +1,12 @@
 import GameObj.Explorer;
 import GameObj.Monsters.Beetles;
 import GameObj.Monsters.Monsters;
+import GameObj.Monsters.Mummies;
 import GameObj.PowerUpObj.PowerUpObj;
-import GameObj.Walls.Walls;
+import GameObj.Walls.Blocks;
+import GameObj.Walls.Wall;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -25,6 +28,7 @@ public class GameWorld extends JPanel {
 
     //todo  test field
     private Beetles b1;
+    private Mummies m1;
 
 
     private final String map1 ="resources/map1.csv";
@@ -36,6 +40,8 @@ public class GameWorld extends JPanel {
     private ExplorerControl explorerControl;
     private float explorerSpeed = 2.2f;         //set explorerSpeed
 
+    BufferedImage worldBackgroundImg;
+
 
     private BufferedImage world;
     private Image background ;
@@ -45,12 +51,14 @@ public class GameWorld extends JPanel {
     private BufferedImage sword, scroll,treasure1, treasure2, potion,scarab;
     private BufferedImage lives,buttonHelp,buttonLoad,buttonQuit, buttonScores, buttonStart;
 
-    private ArrayList<Monsters> monsters = new ArrayList<>();
-    private ArrayList<PowerUpObj> powerUpObjs = new ArrayList<>();
-    private ArrayList<Walls> walls = new ArrayList<>();
+    private ArrayList<Monsters> monsters;
+    private ArrayList<PowerUpObj> powerUpObjs;
+    private ArrayList<Wall> walls;
+    private ArrayList<Blocks> blocks;
 
 
-    private int tileHeight, tileWidth;
+
+//    private int tileHeight, tileWidth;
 
     private ArrayList<Collision> collisions;
 
@@ -63,11 +71,20 @@ public class GameWorld extends JPanel {
             while(true) {
 
                 //todo update item state
-                gameWorld.player.update();
+                gameWorld.explorer.update();
 
                 for (Monsters m: gameWorld.monsters) {
                     m.update();
                 }
+
+                for (Wall w: gameWorld.walls) {
+                    w.update();
+                }
+
+                for (Blocks b: gameWorld.blocks) {
+                    b.update();
+                }
+
 
 
 
@@ -88,7 +105,10 @@ public class GameWorld extends JPanel {
     private void init() {
 
         this.jf = new JFrame("PyramidPanic ");
-        this.world = new BufferedImage(GAME_WIDTH,GAME_HEIGHT,BufferedImage.TYPE_INT_RGB);
+        world = new BufferedImage(GAME_WIDTH,GAME_HEIGHT,BufferedImage.TYPE_INT_RGB);
+
+
+
 
         try{
             //import image
@@ -128,22 +148,15 @@ public class GameWorld extends JPanel {
             buttonQuit = read(new File("resources/Button_quit.gif"));
             buttonScores = read(new File("resources/Button_scores.gif"));
 
-
-
-
-
-
-            player = new Player(explorerUp,explorerDown,explorerLeft,explorerRight,explorerSpeed);
-            explorer = player.getExplorer();
-            explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP,KeyEvent.VK_DOWN,KeyEvent.VK_LEFT,
-                    KeyEvent.VK_RIGHT);
-
-
-            //todo test filed
-            b1 = new Beetles(250,100,beetleUp,beetleDown);
-            monsters.add(b1);
-
-
+            //create the background image
+            worldBackgroundImg = new BufferedImage(GAME_WIDTH,GAME_HEIGHT,BufferedImage.TYPE_INT_RGB);
+            Graphics g = worldBackgroundImg.getGraphics();
+            int tileWidth = background.getWidth(null);
+            int tileHeight = background.getHeight(null);
+            for (int i = 0; i <= (GAME_HEIGHT / tileHeight) - 1; i++)
+                for (int j = 0; j <= (GAME_WIDTH / tileWidth) - 1; j++)
+                    g.drawImage(background, j * tileWidth , i * tileHeight , tileWidth, tileHeight, null);
+//            ImageIO.write(worldBackgroundImg, "bmp",new File("wbg.bmp"));
 
 
         }catch (IOException io){
@@ -152,6 +165,29 @@ public class GameWorld extends JPanel {
         }catch (Exception ex){
             System.out.println("ex:" + ex);
         }
+
+
+
+
+
+
+        monsters = new ArrayList<>();
+        walls = new ArrayList<>();
+        powerUpObjs  = new ArrayList<>();
+        blocks = new ArrayList<>();
+
+        explorer = new Explorer(245,100,explorerUp, explorerDown, explorerLeft ,explorerRight,explorerSpeed);  //todo  default loc
+        explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP,KeyEvent.VK_DOWN,KeyEvent.VK_LEFT,
+                KeyEvent.VK_RIGHT);
+
+
+        //todo test filed
+        Beetles b1 = new Beetles(250,100,beetleUp,beetleDown);
+        Mummies m1 = new Mummies(260,100,mummyUp,mummyDown,mummyLeft,mummyRight);
+        monsters.add(b1);
+        monsters.add(m1);
+
+
 
         this.jf.setLayout(new BorderLayout());
         this.jf.add(this);
@@ -166,25 +202,29 @@ public class GameWorld extends JPanel {
         this.jf.setVisible(true);
 
 
-        this.tileWidth = background.getWidth(null);
-        this.tileHeight = background.getHeight(null);
-
 
     }
 
-    private int GetSubWorldX( Explorer explorer, BufferedImage explorerImg){
+    private int GetSubWorldX( Explorer explorer){
         int explorerX = explorer.getX() + explorerLeft.getWidth()/2;
-        if (explorerX - SCREEN_WIDTH/4 <= 0)    return 0;
-        else if(explorerX + SCREEN_WIDTH/4 >= GAME_WIDTH)  return GAME_WIDTH - SCREEN_WIDTH/2;
-        else return explorerX - SCREEN_WIDTH/4;
+        if (explorerX - SCREEN_WIDTH/2 <= 0)    return 0;
+        else if(explorerX + SCREEN_WIDTH/2 >= GAME_WIDTH)  return GAME_WIDTH - SCREEN_WIDTH;
+        else return explorerX - SCREEN_WIDTH/2;
+
     }
 
-    private int GetSubWorldY( Explorer explorer, BufferedImage explorerImg){
+    private int GetSubWorldY( Explorer explorer){
         int explorerY = explorer.getY() + explorerLeft.getHeight()/2;
         if (explorerY - SCREEN_HEIGHT/2 <= 0)    return 0;
-        else if(explorerY + SCREEN_HEIGHT/2 >= GAME_WIDTH)  return GAME_HEIGHT - SCREEN_HEIGHT;
+        else if(explorerY + SCREEN_HEIGHT/2 >= GAME_HEIGHT)  return GAME_HEIGHT - SCREEN_HEIGHT;
         else return explorerY - SCREEN_HEIGHT/2;
+
+
+
+
     }
+
+
 
 
 
@@ -196,26 +236,22 @@ public class GameWorld extends JPanel {
         buffer = world.createGraphics();
         super.paintComponent(g2);
 
-        for (int i = 0; i <= (GAME_HEIGHT / tileHeight) - 1; i++)
-            for (int j = 0; j <= (GAME_WIDTH / tileWidth) - 1; j++)
-                buffer.drawImage(background, j * tileWidth , i * tileHeight , tileWidth, tileHeight, null);
-//        buffer.drawImage(background, 20, 20, null);
-
+        buffer.drawImage(worldBackgroundImg,0,0,null);
 
         //keep the explorer insight
         int subworldX, subworldY;
-        subworldX = GetSubWorldX(explorer, explorerUp);
-        subworldY = GetSubWorldY(explorer, explorerDown);
+        subworldX = GetSubWorldX(explorer);
+        subworldY = GetSubWorldY(explorer);
         BufferedImage worldSeen = world.getSubimage(subworldX,subworldY,SCREEN_WIDTH,SCREEN_HEIGHT);
 
-        explorer.drawImage(buffer,explorer.getCurrImg());
+
+        //obj drawing//todo
+        explorer.drawImage(buffer);
 
         //test field todo
         for (Monsters m: monsters) {
-            m.drawImage(buffer,m.getCurrImg());
+            m.drawImage(buffer);
         }
-
-
 
         g2.drawImage(worldSeen, 0, 0, null);
 

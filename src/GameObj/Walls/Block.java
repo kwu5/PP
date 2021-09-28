@@ -1,13 +1,12 @@
 package GameObj.Walls;
 
-public class Block extends Walls{
+import java.awt.image.BufferedImage;
+
+public class Block extends Blocks {
 
 
-
-
-
-    Block(int x, int y){
-        super(x,y);
+    Block(int x, int y, BufferedImage img){
+        super(x,y,img);
     }
 
 

@@ -11,7 +11,7 @@ public class Explorer extends GameObj{
     private int imgWidth, imgHeight;
     private float speed;
 
-    private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg,currImg;
+    private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
 
 
     private Rectangle exRect;
@@ -23,7 +23,7 @@ public class Explorer extends GameObj{
 
     public Explorer( int x,int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight,
     float speed){
-        super(x,y);
+        super(x,y, exUp);
 
         this.speed =speed;
 
@@ -32,7 +32,7 @@ public class Explorer extends GameObj{
         this.moveLeft = false;
         this.moveRight = false;
 
-        this.currImg = exDownImg;
+        this.currentImg = exDownImg;
         this.exUpImg = exUp;
         this.exDownImg = exDown;
         this.exLeftImg = exLeft;
@@ -89,22 +89,22 @@ public class Explorer extends GameObj{
         if(leftPressed){
             this.moveLeft();
             moveLeft = true;
-            this.currImg = exLeftImg;
+            this.currentImg = exLeftImg;
         }
         if(rightPressed){
             this.moveRight();
             moveRight = true;
-            this.currImg = exRightImg;
+            this.currentImg = exRightImg;
         }
         if(upPressed){
             this.moveUp();
             moveUp = true;
-            this.currImg = exUpImg;
+            this.currentImg= exUpImg;
         }
         if(downPressed){
             this.moveDown();
             moveDown = true;
-            this.currImg = exDownImg;
+            this.currentImg= exDownImg;
         }
 
     }
@@ -125,7 +125,6 @@ public class Explorer extends GameObj{
 
     public int getX(){return x;};
     public int getY(){return y;};
-    public BufferedImage getCurrImg(){return currImg;};
 
 //    @Override
 //    public void drawImage(Graphics g){

@@ -9,17 +9,13 @@ public class Player {
 
 //    private BufferedImage exImg;
 
-    public Player(BufferedImage exUpImg, BufferedImage exDownImg, BufferedImage exLeftImg, BufferedImage exRightImg,
-                  float speed){
-        this.explorer = new Explorer(245,100,exUpImg, exDownImg, exLeftImg ,exRightImg,speed);  //todo  default loc
+    public Player(){
     }
 
-    public Explorer getExplorer(){
-        return explorer;
-    }
+
 
     public void update(){
-        explorer.update();
+
     }
 
 

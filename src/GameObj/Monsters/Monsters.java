@@ -7,34 +7,40 @@ import java.awt.image.BufferedImage;
 
 public abstract class Monsters extends GameObj {
 
-    final float speed = 1.0f;    //set up monster speed
+    final float normalSpeed = 1.0f;//set up monster speed
+    final float fastSpeed = 2.0f;
+    public float speed = normalSpeed;
 
-    Monsters(int x,int y){
-        super(x,y);
-
+    protected Monsters(int x,int y, BufferedImage img){
+        super(x,y,img);
     }
 
 //    public abstract BufferedImage getCurrentImg();
 
 
-//    Monsters(int x,int y){
-//        super(x,y);
-//    }
 
-
-
-    protected void moveUp(BufferedImage currImg){
+    protected void moveUp(BufferedImage upImg){
+        this.currentImg= upImg;
         y-=speed;}
 
-    protected void moveDown(BufferedImage currImg){y+=speed;}
+    protected void moveDown(BufferedImage downImg){
+        this.currentImg= downImg;
+        y+=speed;}
 
-    protected void moveLeft(BufferedImage currImg){x-=speed;}
+    protected void moveLeft(BufferedImage leftImg){
+        this.currentImg= leftImg;
+        x-=speed;}
 
-    protected void moveRight(BufferedImage currImg){x+= speed;}
+    protected void moveRight(BufferedImage rightImg){
+        this.currentImg= rightImg;
+        x+= speed;}
+
+    public void ExplorerInSight(boolean inSight){
+        if (inSight) speed = fastSpeed;
+        else speed = normalSpeed;
+    }
 
 
-
-    public abstract BufferedImage getCurrImg();
 
 
 

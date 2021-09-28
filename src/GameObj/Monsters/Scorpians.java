@@ -4,9 +4,9 @@ import java.awt.image.BufferedImage;
 
 public class Scorpians extends Monsters{
 
-    BufferedImage currImg;
-    Scorpians(int x, int y){
-        super(x,y);
+
+    Scorpians(int x, int y,BufferedImage img){
+        super(x,y,img);
     }
 
     @Override
@@ -14,8 +14,5 @@ public class Scorpians extends Monsters{
 
     }
 
-    @Override
-    public BufferedImage getCurrImg(){
-        return currImg;
-    }
+
 }

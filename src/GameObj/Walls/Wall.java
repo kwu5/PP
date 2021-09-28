@@ -1,16 +1,14 @@
 package GameObj.Walls;
 
+import GameObj.GameObj;
+
 import java.awt.image.BufferedImage;
 
-public class Wall extends Walls{
+public class Wall extends GameObj {
 
+    public Wall(BufferedImage wall, int x, int y){
+        super(x,y,wall);
 
-    private BufferedImage wall1, wall2;
-
-    public Wall(BufferedImage wall1, BufferedImage wall2, int x, int y){
-        super(x,y);
-        this.wall1 = wall1;
-        this.wall2 = wall2;
     }
 
 
@@ -18,6 +16,5 @@ public class Wall extends Walls{
 
     @Override
     public void update() {
-
     }
 }
