@@ -26,6 +26,10 @@ public abstract class Blocks extends GameObj {
 
     }
 
+    public void wallCollision(){
+
+    }
+
 
 
 }

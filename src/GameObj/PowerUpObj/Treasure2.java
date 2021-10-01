@@ -4,13 +4,9 @@ import java.awt.image.BufferedImage;
 
 public class Treasure2 extends PowerUpObj{
 
-    Treasure2(int x, int y, BufferedImage img){
-        super(x,y,img);
+    public Treasure2(int x, int y, BufferedImage img, int earnPt){
+        super(x,y,img,earnPt);
     }
 
 
-    @Override
-    public void update() {
-
-    }
 }

@@ -4,11 +4,10 @@ import java.awt.image.BufferedImage;
 
 public class Potion extends PowerUpObj{
 
-    Potion(int x, int y, BufferedImage img){
-        super(x,y,img);
+    public Potion(int x, int y, BufferedImage img, int earnPt){
+        super(x,y,img,earnPt);
     }
-    @Override
-    public void update() {
 
-    }
+
+
 }

@@ -4,12 +4,9 @@ import java.awt.image.BufferedImage;
 
 public class Sword extends PowerUpObj{
 
-    Sword(int x, int y, BufferedImage img){
-        super(x,y,img);
+    public Sword(int x, int y, BufferedImage img, int earnPt){
+        super(x,y,img, earnPt);
     }
 
-    @Override
-    public void update() {
 
-    }
 }

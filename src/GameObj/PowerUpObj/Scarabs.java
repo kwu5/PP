@@ -4,12 +4,9 @@ import java.awt.image.BufferedImage;
 
 public class Scarabs extends PowerUpObj{
 
-    Scarabs(int x, int y, BufferedImage img){
-        super(x,y,img);
+    public Scarabs(int x, int y, BufferedImage img,int earnPt){
+        super(x,y,img,earnPt);
     }
 
-    @Override
-    public void update() {
 
-    }
 }

@@ -1,5 +1,7 @@
 package GameObj;
 
+import GameObj.PowerUpObj.PowerUpObj;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -9,7 +11,7 @@ public class Explorer extends GameObj{
 
 
     private int imgWidth, imgHeight;
-    private float speed;
+
 
     private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
 
@@ -19,18 +21,14 @@ public class Explorer extends GameObj{
 
 
     private boolean leftPressed, rightPressed, upPressed, downPressed;
-    private boolean moveUp, moveDown, moveLeft, moveRight;
+    private boolean isMoveDown, isMoveLeft, isMoveRight , isMoveUp ;
+    private boolean swordGained;
 
     public Explorer( int x,int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight,
-    float speed){
+    int speed){
         super(x,y, exUp);
 
         this.speed =speed;
-
-        this.moveDown = false;
-        this.moveUp = false;
-        this.moveLeft = false;
-        this.moveRight = false;
 
         this.currentImg = exDownImg;
         this.exUpImg = exUp;
@@ -42,6 +40,8 @@ public class Explorer extends GameObj{
         this.imgWidth = exUpImg.getWidth();
 
         this.exRect = new Rectangle(x,y,imgWidth,imgHeight);
+
+        this.swordGained =false;
 
     }
 
@@ -81,31 +81,35 @@ public class Explorer extends GameObj{
     @Override
     public void update(){
 
-        moveDown = false;
-        moveUp = false;
-        moveRight = false;
-        moveLeft = false;
+        isMoveDown = false;
+        isMoveUp = false;
+        isMoveLeft = false;
+        isMoveRight = false;
 
         if(leftPressed){
             this.moveLeft();
-            moveLeft = true;
+            isMoveLeft = true;
             this.currentImg = exLeftImg;
         }
         if(rightPressed){
             this.moveRight();
-            moveRight = true;
+            isMoveRight = true;
             this.currentImg = exRightImg;
         }
         if(upPressed){
             this.moveUp();
-            moveUp = true;
+            isMoveUp = true;
             this.currentImg= exUpImg;
         }
         if(downPressed){
             this.moveDown();
-            moveDown = true;
+            isMoveDown = true;
             this.currentImg= exDownImg;
         }
+
+
+        updateRect();
+//        System.out.println(rect.x + "     "+ rect.y);
 
     }
 
@@ -123,8 +127,21 @@ public class Explorer extends GameObj{
         x+=speed;
     }
 
-    public int getX(){return x;};
-    public int getY(){return y;};
+    public void moveBack(){
+
+        System.out.println("moveback");
+        if(isMoveDown)      y-=speed;
+        else if(isMoveUp)     y+= speed;
+        else if(isMoveLeft)     x+= speed;
+        else if(isMoveRight)    x-=speed;
+    }
+
+    public void gainSword(){swordGained = true;}
+    public boolean isSwordGained(){return swordGained;}
+
+
+
+
 
 //    @Override
 //    public void drawImage(Graphics g){
