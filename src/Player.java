@@ -26,9 +26,6 @@ public class Player {
 
     public void earnPt(int pt){score += pt;}
 
-
-
-
     public void update(GameObj p){
         if(p instanceof Monsters){
             lives --;

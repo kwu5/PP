@@ -129,7 +129,7 @@ public class Explorer extends GameObj{
 
     public void moveBack(){
 
-        System.out.println("moveback");
+//        System.out.println("moveback");
         if(isMoveDown)      y-=speed;
         else if(isMoveUp)     y+= speed;
         else if(isMoveLeft)     x+= speed;

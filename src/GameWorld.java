@@ -5,7 +5,7 @@ import GameObj.Monsters.Monsters;
 import GameObj.Monsters.Mummy;
 import GameObj.Monsters.Scorpion;
 import GameObj.PowerUpObj.*;
-import GameObj.Walls.Blocks;
+import GameObj.Walls.Block;
 import GameObj.Walls.Wall;
 import GameObj.Door;
 
@@ -29,9 +29,7 @@ public class GameWorld extends JPanel {
     private static final int SCREEN_WIDTH = 1024;
     private static final int SCREEN_HEIGHT = 720;
 
-    //todo  test field
-    private Beetle b1;
-    private Mummy m1;
+
 
 
     private final String map1 = "resources/map1.csv";
@@ -53,13 +51,15 @@ public class GameWorld extends JPanel {
     private BufferedImage block, blockHor, blockVert, wall1, wall2, door;
     private BufferedImage sword, scroll, treasure1, treasure2, potion, scarab;
     private BufferedImage lives, buttonHelp, buttonLoad, buttonQuit, buttonScores, buttonStart;
+    private BufferedImage congratulation, title,panel,light,background1, gameOver;
 
     private ArrayList<Monsters> monsters;
     private ArrayList<PowerUpObj> powerUpObjs;
     private ArrayList<Wall> walls;
-    private ArrayList<Blocks> blocks;
+    private ArrayList<Block> blocks;
 //    private ArrayList<Collision> collisions;
     private Stack<Collision> collisions;
+    private GameEvent gameEvent;
 
 
 
@@ -88,7 +88,7 @@ public class GameWorld extends JPanel {
                     gameWorld.checkCollision(w);
                 }
 
-                for (Blocks b : gameWorld.blocks) {
+                for (Block b : gameWorld.blocks) {
                     b.update();
                     gameWorld.checkCollision(b);
                 }
@@ -104,16 +104,33 @@ public class GameWorld extends JPanel {
 //                }
 
                 while(!gameWorld.collisions.empty()){
-                    GameObj tem = gameWorld.collisions.pop().handleCollision();
-                    gameWorld.getCollisionResult(tem);
+                    GameObj tem = gameWorld.collisions.pop().handleCollision(gameWorld.player);
+                    gameWorld.deleteCollisionObj(tem);
                 }
 
+                gameWorld.gameEvent.updateEvent(gameWorld.player);
 
-                //todo trigger game event
+
+
 
 
                 gameWorld.repaint();
+
+
+                //todo gameEvent
+                if(gameWorld.gameEvent.isGameOver()){
+                    break;
+                }
+                if(gameWorld.gameEvent.isWin()){
+                    break;
+                }
+
+
                 Thread.sleep(1000 / 144);
+
+
+
+
             }
         } catch (InterruptedException interruptedException) {
             System.out.println(interruptedException);
@@ -173,6 +190,19 @@ public class GameWorld extends JPanel {
             buttonQuit = read(new File("resources/Button_quit.gif"));
             buttonScores = read(new File("resources/Button_scores.gif"));
 
+
+            congratulation = read(new File("resources/Congratulation.gif"));
+            light = read(new File("resources/Light.bmp"));
+            title = read(new File("resources/Title.gif"));
+            panel = read(new File("resources/Panel.gif"));
+            gameOver = read(new File("resources/game_over.png"));
+            gameOver = resize(gameOver,GAME_WIDTH,GAME_HEIGHT);
+            congratulation = resize(congratulation,GAME_WIDTH,GAME_HEIGHT);
+
+
+
+
+
             //create the background image
             worldBackgroundImg = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
             Graphics g = worldBackgroundImg.getGraphics();
@@ -205,6 +235,7 @@ public class GameWorld extends JPanel {
         explorer = new Explorer(500,450 , explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);  //todo  default loc
         explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT,
                 KeyEvent.VK_RIGHT);
+        gameEvent = new GameEvent(player,explorer,gameOver,congratulation);
 
 
         //todo test filed
@@ -304,6 +335,14 @@ public class GameWorld extends JPanel {
         explorer.drawImage(buffer);
 
 
+        //todo
+        if(gameEvent.isGameOver()){
+            buffer.drawImage(gameOver, 0, 0, null);
+        }else if(gameEvent.isWin()){
+            buffer.drawImage(congratulation,0,0,null);
+        }
+
+
         //keep the explorer insight
         int subworldX, subworldY;
         subworldX = GetSubWorldX(explorer);
@@ -311,14 +350,6 @@ public class GameWorld extends JPanel {
         BufferedImage worldSeen = world.getSubimage(subworldX, subworldY, SCREEN_WIDTH, SCREEN_HEIGHT);
         g2.drawImage(worldSeen, 0, 0, null);
 
-
-    }
-
-    public void clearMap() {
-
-    }
-
-    public void addMap() {
 
     }
 
@@ -355,7 +386,7 @@ public class GameWorld extends JPanel {
                 if (tem.intersects(m.getRect())) collisions.push(new Collision(g, m));
             }
 
-            for (Blocks b : blocks) {
+            for (Block b : blocks) {
                 if (tem.intersects(b.getRect())) collisions.push(new Collision(g, b));
             }
         }
@@ -371,7 +402,7 @@ public class GameWorld extends JPanel {
 
         //check between monster and block/explorer/monster
         else if (g instanceof Monsters) {
-            for (Blocks b : blocks) {
+            for (Block b : blocks) {
                 if (tem.intersects(b.getRect())) collisions.push(new Collision(g, b));
             }
 
@@ -384,8 +415,8 @@ public class GameWorld extends JPanel {
                 collisions.add(new Collision(g, explorer));
 
             }
-        } else if (g instanceof Blocks) {
-            for (Blocks b : blocks) {
+        } else if (g instanceof Block) {
+            for (Block b : blocks) {
                 if (b.equals(g)) continue;
                 if (tem.intersects(b.getRect())) collisions.push(new Collision(g, b));
             }
@@ -398,28 +429,28 @@ public class GameWorld extends JPanel {
     }
 
     /**
-     * GameWorld process the collision result;
+     * Delete game objects;
      * @param g
      */
-    public void getCollisionResult(GameObj g){
+    public void deleteCollisionObj(GameObj g){
 
         if(g == null)   return;
-        else player.update(g);
-
         try{
             if(g instanceof PowerUpObj)     powerUpObjs.remove(g);
             else if(g instanceof Monsters)      monsters.remove(g);
             else if (g instanceof Door){
-                if(explorer.isSwordGained()){
-
+                if(explorer.isSwordGained()) {
+                    //todo
                 }
-
             }
+
 
         }catch (Exception e){
             System.out.println("getCollisionResultEX: "+ e.getMessage());
         }
     }
+
+
 
 
 
