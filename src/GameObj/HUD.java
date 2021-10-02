@@ -13,4 +13,9 @@ public class HUD extends GameObj{
         super(x,y, img);
     }
 
+
+    @Override
+    public void collision(GameObj gameObj) {
+
+    }
 }

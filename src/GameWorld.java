@@ -7,7 +7,6 @@ import GameObj.Monsters.Scorpion;
 import GameObj.PowerUpObj.*;
 import GameObj.Walls.Block;
 import GameObj.Walls.Wall;
-import GameObj.Door;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,12 +102,14 @@ public class GameWorld extends JPanel {
 //
 //                }
 
+                //update gameEvent and delete object that should disappear
                 while(!gameWorld.collisions.empty()){
                     GameObj tem = gameWorld.collisions.pop().handleCollision(gameWorld.player);
+                    gameWorld.gameEvent.updateEvent();
                     gameWorld.deleteCollisionObj(tem);
                 }
 
-                gameWorld.gameEvent.updateEvent(gameWorld.player);
+//                gameWorld.gameEvent.updateEvent(gameWorld.player);
 
 
 
@@ -117,7 +118,7 @@ public class GameWorld extends JPanel {
                 gameWorld.repaint();
 
 
-                //todo gameEvent
+                //gameEvent
                 if(gameWorld.gameEvent.isGameOver()){
                     break;
                 }
@@ -257,22 +258,16 @@ public class GameWorld extends JPanel {
         walls.add(w5);
         walls.add(w3);
 
-        Potion po1 = new Potion(270, 210, potion, 10);
-        Scarabs sc1 = new Scarabs(300, 210, scarab, 20);
-        Sword sw1 = new Sword(350, 210, sword, 30);
-        Treasure1 tr1 = new Treasure1(400, 210, treasure1, 40);
-        Treasure2 tr2 = new Treasure2(450, 210, treasure2, 50);
+        Potion po1 = new Potion(270, 210, potion);
+        Scarabs sc1 = new Scarabs(300, 210, scarab);
+        Sword sw1 = new Sword(350, 210, sword);
+        Treasure tr1 = new Treasure(400, 210, treasure1, 40);
+        Treasure tr2 = new Treasure(450, 210, treasure2, 50);
         powerUpObjs.add(po1);
         powerUpObjs.add(sc1);
         powerUpObjs.add(sw1);
         powerUpObjs.add(tr1);
         powerUpObjs.add(tr2);
-
-
-
-
-
-
 
         this.jf.setLayout(new BorderLayout());
         this.jf.add(this);
@@ -438,11 +433,8 @@ public class GameWorld extends JPanel {
         try{
             if(g instanceof PowerUpObj)     powerUpObjs.remove(g);
             else if(g instanceof Monsters)      monsters.remove(g);
-            else if (g instanceof Door){
-                if(explorer.isSwordGained()) {
-                    //todo
-                }
-            }
+
+
 
 
         }catch (Exception e){

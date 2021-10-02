@@ -22,9 +22,9 @@ public class GameEvent {
 
     /**
      *
-     * @param player
+     * @param
      */
-    public void updateEvent(Player player){
+    public void updateEvent(){
         if(player.getLives() == 0)      gameOver = true;
 
 

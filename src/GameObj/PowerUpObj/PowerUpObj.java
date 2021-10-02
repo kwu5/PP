@@ -6,17 +6,19 @@ import java.awt.image.BufferedImage;
 
 public abstract class PowerUpObj extends GameObj {
 
-    final int pt ;
+    final int pt;
 
-    PowerUpObj(int x, int y, BufferedImage img, int earnPt){
+    PowerUpObj(int x, int y, BufferedImage img, int pt){
         super(x,y,img);
-        this.pt = earnPt;
+        this.pt = pt;
     }
 
     @Override
     public void update() {
-        x +=0;
-        y += 0;
+    }
+
+    @Override
+    public void collision(GameObj gameObj) {
     }
 
     public int getPt(){

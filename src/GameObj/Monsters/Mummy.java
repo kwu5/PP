@@ -1,13 +1,15 @@
 package GameObj.Monsters;
 
 import GameObj.Explorer;
+import GameObj.PowerUpObj.PowerUpObj;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Mummy extends Monsters{
+public class Mummy extends Monsters {
 
     private BufferedImage mummiesUp, mummiesDown, mummiesLeft, mummiesRight;
+
 
     public Mummy(int x, int y, BufferedImage mUp, BufferedImage mDown, BufferedImage mLeft, BufferedImage mRight ,
                  Explorer explorer ){
@@ -17,6 +19,8 @@ public class Mummy extends Monsters{
         this.mummiesLeft = mLeft;
         this.mummiesRight = mRight;
         facingdirc = RIGHT;
+
+
     }
 
 
@@ -46,12 +50,5 @@ public class Mummy extends Monsters{
                 System.out.println("Invalid direction:"+ this.getClass());
         }
     }
-
-
-//    @Override
-//    public BufferedImage getCurrImg(){
-//        return currImg;
-//    }
-
 
 }

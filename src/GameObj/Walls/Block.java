@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class Block extends GameObj {
 
-    private final int type;
+    private int type;
 
 
     //verify type using 0,1,2 -> block, vertBlock, horBlocks
@@ -16,11 +16,32 @@ public class Block extends GameObj {
     }
 
 
+    /**
+     *
+     final char UP = 'u';
+     final char DOWN = 'd';
+     final char LEFT = 'l';
+     final char RIGHT = 'r';
+     * @param diection
+     * @param explorerSpeed
+     */
 
-    public void isPushed(char diection){
-        if(type == 0){
-
+    public void isPushed(char diection, int explorerSpeed){
+        switch (diection){
+            case 'u':
+                pushUp(explorerSpeed);
+                break;
+            case 'd':
+                pushDown(explorerSpeed);
+                break;
+            case 'l':
+                pushLeft(explorerSpeed);
+                break;
+            case 'r':
+                pushRight(explorerSpeed);
+                break;
         }
+
     }
 
 
@@ -28,32 +49,25 @@ public class Block extends GameObj {
         return type;
     }
 
-
-
-
-
-
-
-
-
-
-
-    public void pushLeft(){
-
+    public void pushLeft(int speed){
+        this.x -= speed;
     }
-    public void pushRight(){
-
+    public void pushRight(int speed){
+        this.x += speed;
     }
-
-    public void pushUp(){
-
+    public void pushUp(int speed){
+        this.y += speed;
     }
-
-    public void pushDown(){
-
+    public void pushDown(int speed){
+        this.y -= speed;
     }
 
     public void wallCollision(){
+    }
+
+    @Override
+    public void collision(GameObj g) {
+        if(g instanceof Wall   || g instanceof Block)   wallCollision();
 
     }
 

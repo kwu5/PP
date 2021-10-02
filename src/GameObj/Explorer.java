@@ -1,6 +1,8 @@
 package GameObj;
 
 import GameObj.PowerUpObj.PowerUpObj;
+import GameObj.Walls.Block;
+import GameObj.Walls.Wall;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -11,18 +13,15 @@ public class Explorer extends GameObj{
 
 
     private int imgWidth, imgHeight;
-
-
     private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
 
-
     private Rectangle exRect;
-
+    private int speed;
 
 
     private boolean leftPressed, rightPressed, upPressed, downPressed;
     private boolean isMoveDown, isMoveLeft, isMoveRight , isMoveUp ;
-    private boolean swordGained;
+
 
     public Explorer( int x,int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight,
     int speed){
@@ -41,7 +40,7 @@ public class Explorer extends GameObj{
 
         this.exRect = new Rectangle(x,y,imgWidth,imgHeight);
 
-        this.swordGained =false;
+
 
     }
 
@@ -49,33 +48,65 @@ public class Explorer extends GameObj{
     public void toggleRightPressed() {
         this.rightPressed = true;
     }
-
     public void toggleLeftPressed() {
         this.leftPressed = true;
     }
-
     public void toggleUpPressed() {
         this.upPressed = true;
     }
-
     public void toggleDownPressed() {
         this.downPressed = true;
     }
-
     public void unToggleRightPressed() {
         this.rightPressed = false;
     }
-
     public void unToggleLeftPressed() {
         this.leftPressed = false;
     }
-
     public void unToggleUpPressed() {
         this.upPressed = false;
     }
-
     public void unToggleDownPressed() {
         this.downPressed = false;
+    }
+
+    private void moveUp(){
+        y-=speed;
+    }
+    private void moveDown(){
+        y+=speed;
+    }
+    private void moveLeft(){
+        x-=speed;
+    }
+    private void moveRight(){
+        x+=speed;
+    }
+    public void moveBack(){
+//        System.out.println("moveback");
+        if(isMoveDown)      y-=speed;
+        else if(isMoveUp)     y+= speed;
+        else if(isMoveLeft)     x+= speed;
+        else if(isMoveRight)    x-=speed;
+    }
+
+    public int getSpeed(){return  speed;};
+    public char getDirection(){
+        if(isMoveDown)      return 'd';
+        else if(isMoveUp)   return 'u';
+        else if(isMoveLeft) return 'l';
+        else     return 'r';
+    }
+
+    /**
+     * explorer collision
+     * @param g
+     */
+    @Override
+    public void collision(GameObj g) {
+        if (g instanceof Wall || g instanceof Block || g instanceof Door) {
+            moveBack();
+        }
     }
 
     @Override
@@ -109,46 +140,10 @@ public class Explorer extends GameObj{
 
 
         updateRect();
-//        System.out.println(rect.x + "     "+ rect.y);
-
     }
 
 
-    private void moveUp(){
-        y-=speed;
-    }
-    private void moveDown(){
-        y+=speed;
-    }
-    private void moveLeft(){
-        x-=speed;
-    }
-    private void moveRight(){
-        x+=speed;
-    }
 
-    public void moveBack(){
-
-//        System.out.println("moveback");
-        if(isMoveDown)      y-=speed;
-        else if(isMoveUp)     y+= speed;
-        else if(isMoveLeft)     x+= speed;
-        else if(isMoveRight)    x-=speed;
-    }
-
-    public void gainSword(){swordGained = true;}
-    public boolean isSwordGained(){return swordGained;}
-
-
-
-
-
-//    @Override
-//    public void drawImage(Graphics g){
-//        Graphics2D g2d= (Graphics2D) g;
-////        System.out.println(x + "   "+y);
-//        g2d.drawImage(currImg,x,y,null );
-//    }
 
 
 

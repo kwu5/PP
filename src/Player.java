@@ -11,20 +11,26 @@ public class Player {
 //    private BufferedImage exImg;
     private boolean scarabsActive;
     private int lives,score;
+    private boolean swordGained;
+
 
     public Player(int lives, int score){
         this.lives =lives;
         this.score = score;
         scarabsActive =false;
+        this.swordGained =false;
 
     }
 
 
     public int getLives(){return lives;}
-
     public int getScore(){return score;}
 
     public void earnPt(int pt){score += pt;}
+
+    public void gainSword(){swordGained = true;}
+    public boolean isSwordGained(){return swordGained;}
+
 
     public void update(GameObj p){
         if(p instanceof Monsters){
