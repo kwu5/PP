@@ -16,7 +16,7 @@ public abstract class Monsters extends GameObj {
 
 
     final int normalSpeed = 1;//set up monster speed  //todo
-    final int fastSpeed = 2, points;
+    final int fastSpeed = 2;
     public int speed;
 
     final char UP = 'u';
@@ -31,11 +31,10 @@ public abstract class Monsters extends GameObj {
         super(x,y,img);
         this.e = e;
         this.speed = normalSpeed;
-        this.points = 100;
+
 
     }
 
-    public int getPoints(){return points;}
 
 //    public abstract BufferedImage getCurrentImg();
 
@@ -83,7 +82,7 @@ public abstract class Monsters extends GameObj {
     public void collision(GameObj g) {
         if(g instanceof Wall || g instanceof Monsters || g instanceof Block || g instanceof Door)
         {
-            System.out.println("g is "+ g.getClass().getName());
+//            System.out.println("g is "+ g.getClass().getName());
             moveOpposite();
         }
     }

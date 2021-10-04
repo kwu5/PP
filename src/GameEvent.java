@@ -26,6 +26,9 @@ public class GameEvent {
      */
     public void updateEvent(){
         if(player.getLives() == 0)      gameOver = true;
+        if(player.isUnlockDoor())       win = true;
+
+
 
 
     }

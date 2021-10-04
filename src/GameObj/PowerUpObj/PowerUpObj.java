@@ -21,8 +21,6 @@ public abstract class PowerUpObj extends GameObj {
     public void collision(GameObj gameObj) {
     }
 
-    public int getPt(){
-        return pt;
-    }
+
 
 }

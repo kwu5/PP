@@ -20,8 +20,14 @@ public class Collision {
     //handle all collisions
     public GameObj handleCollision(Player player) {
 
+
 //       obj1.collision(obj2);
        obj2.collision(obj1);
+
+       //block special
+        if (obj1 instanceof Block){
+            obj1.collision(obj2);
+        }
 
        //powerUpObj
        if(obj1 instanceof PowerUpObj){

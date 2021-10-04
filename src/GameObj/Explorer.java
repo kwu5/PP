@@ -104,8 +104,32 @@ public class Explorer extends GameObj{
      */
     @Override
     public void collision(GameObj g) {
-        if (g instanceof Wall || g instanceof Block || g instanceof Door) {
+        if (g instanceof Wall || g instanceof Door) {
+//            System.out.println("g is "+ g.getClass().getName());
             moveBack();
+        }else if (g instanceof Block){
+
+            if(((Block) g).getHitwall())        moveBack();
+            else {
+
+
+                switch (((Block) g).getType()) {
+                    case 0:
+                        moveBack();
+                        break;
+                    case 1:
+                        if (isMoveLeft || isMoveRight) {
+                            moveBack();
+                        }
+                        break;
+                    case 2:
+                        if (isMoveUp || isMoveDown) {
+                            moveBack();
+                        }
+                        break;
+                    default:
+                }
+            }
         }
     }
 

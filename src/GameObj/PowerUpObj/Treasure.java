@@ -8,5 +8,8 @@ public class Treasure extends PowerUpObj{
         super(x,y,img,earnpt);
     }
 
+    public int getPt(){
+        return pt;
+    }
 
 }

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 public class Mummy extends Monsters {
 
     private BufferedImage mummiesUp, mummiesDown, mummiesLeft, mummiesRight;
+    final int points = 300;
 
 
     public Mummy(int x, int y, BufferedImage mUp, BufferedImage mDown, BufferedImage mLeft, BufferedImage mRight ,
@@ -29,6 +30,10 @@ public class Mummy extends Monsters {
     protected void patrol() {
 
 
+    }
+
+    public int getPoints(){
+        return points;
     }
 
     @Override
