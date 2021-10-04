@@ -5,8 +5,7 @@ import GameObj.Monsters.Monsters;
 import GameObj.Monsters.Mummy;
 import GameObj.Monsters.Scorpion;
 import GameObj.PowerUpObj.*;
-import GameObj.Walls.Block;
-import GameObj.Walls.Wall;
+import GameObj.Walls.*;
 import GameObj.Door;
 
 import javax.swing.*;
@@ -119,6 +118,7 @@ public class GameWorld extends JPanel {
                     gameWorld.deleteCollisionObj(tem);
                 }
 
+
                 gameWorld.gameEvent.updateEvent();
                 gameWorld.panel.update(gameWorld.player.getLives(),gameWorld.player.getScarabsNum(),gameWorld.player.getScore());
                 gameWorld.repaint();
@@ -221,11 +221,12 @@ public class GameWorld extends JPanel {
 
         door  =  new Door(500,700,doorImg);
         player = new Player(3);
-        explorer = new Explorer(600,700 , explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);  //todo  default loc
+        explorer = new Explorer(800,700 , explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);  //todo  default loc
         explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT,
                 KeyEvent.VK_RIGHT);
-        gameEvent = new GameEvent(player,explorer,gameOver,congratulation);
+        gameEvent = new GameEvent(player,explorer,gameOver,congratulation, explorer.getX(),explorer.getY());
         panel = new Panel(SCREEN_WIDTH,SCREEN_HEIGHT,panelImg,lives,scarab);
+
 
 
         //todo test filed
@@ -252,7 +253,7 @@ public class GameWorld extends JPanel {
         walls.add(w4);
         walls.add(w5);
         walls.add(w3);
-        walls.add(w6);
+//        walls.add(w6);
         walls.add(w7);
 
         Potion po1 = new Potion(270, 210, potion);
@@ -266,9 +267,9 @@ public class GameWorld extends JPanel {
         powerUpObjs.add(tr1);
         powerUpObjs.add(tr2);
 
-        Block bl0 = new Block(600, 600,block,0,explorer);
-        Block bl1 = new Block(700,700,blockVert,1,explorer);
-        Block bl2 = new Block(800,800,blockHor,2,explorer);
+        Block bl0 = new NormalBlock(600, 600,block,explorer);
+        Block bl1 = new VertBlock(700,700,blockVert,explorer,300,1400);
+        Block bl2 = new HorBlock(800,800,blockHor,explorer,600,1600);
         blocks.add(bl0);
         blocks.add(bl1);
         blocks.add(bl2);
@@ -339,17 +340,6 @@ public class GameWorld extends JPanel {
         door.drawImage(buffer);
 
 
-
-
-        //todo
-        if(gameEvent.isGameOver()){
-            buffer.drawImage(gameOver, 0, 0, null);
-        }else if(gameEvent.isWin()){
-            buffer.drawImage(congratulation,0,0,null);
-        }
-
-
-        //keep the explorer insight
         int subworldX, subworldY;
         subworldX = GetSubWorldX(explorer);
         subworldY = GetSubWorldY(explorer);
@@ -357,10 +347,21 @@ public class GameWorld extends JPanel {
         panel.updateLoc(subworldX,subworldY);
         panel.drawImage(buffer);
 
-
+        //keep the explorer in sight
         BufferedImage worldSeen = world.getSubimage(subworldX, subworldY, SCREEN_WIDTH, SCREEN_HEIGHT- panelImg.getHeight());
         g2.drawImage(worldSeen, 0, 0, null);
 
+        //gameEvent
+
+        int xOffset = SCREEN_WIDTH/2;
+        int yOffest = SCREEN_HEIGHT/2;
+        if(gameEvent.isGameOver()){
+            buffer.drawImage(gameOver,subworldX,subworldY,null);
+//            gameEvent.drawImage(buffer,gameOver);
+        }else if(gameEvent.isWin()){
+//            gameEvent.drawImage(buffer, congratulation);
+            buffer.drawImage(gameOver,explorer.getX(),explorer.getY(),null);
+        }
 
     }
 

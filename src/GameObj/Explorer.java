@@ -1,8 +1,7 @@
 package GameObj;
 
 import GameObj.PowerUpObj.PowerUpObj;
-import GameObj.Walls.Block;
-import GameObj.Walls.Wall;
+import GameObj.Walls.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -16,7 +15,7 @@ public class Explorer extends GameObj{
     private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
 
     private Rectangle exRect;
-    private int speed;
+    private int speed, normalSpeed;
 
 
     private boolean leftPressed, rightPressed, upPressed, downPressed;
@@ -28,6 +27,7 @@ public class Explorer extends GameObj{
         super(x,y, exUp);
 
         this.speed =speed;
+//        this.normalSpeed = speed;
 
         this.currentImg = exDownImg;
         this.exUpImg = exUp;
@@ -98,6 +98,22 @@ public class Explorer extends GameObj{
         else     return 'r';
     }
 
+    private void collisionBlock(Block block){
+//        speed = block.getSpeed();
+        if (block instanceof NormalBlock){
+            moveBack();
+        }else if(block instanceof HorBlock){
+            if(getDirection() == 'u' || getDirection() == 'd' || block.isOutOfRange()){
+                moveBack();
+
+            }
+        }else if(block instanceof VertBlock){
+            if(getDirection() == 'l' || getDirection()=='r'||block.isOutOfRange()){
+                moveBack();
+            }
+        }
+    }
+
     /**
      * explorer collision
      * @param g
@@ -108,28 +124,30 @@ public class Explorer extends GameObj{
 //            System.out.println("g is "+ g.getClass().getName());
             moveBack();
         }else if (g instanceof Block){
-
-            if(((Block) g).getHitwall())        moveBack();
-            else {
+            collisionBlock((Block) g);
 
 
-                switch (((Block) g).getType()) {
-                    case 0:
-                        moveBack();
-                        break;
-                    case 1:
-                        if (isMoveLeft || isMoveRight) {
-                            moveBack();
-                        }
-                        break;
-                    case 2:
-                        if (isMoveUp || isMoveDown) {
-                            moveBack();
-                        }
-                        break;
-                    default:
-                }
-            }
+//            if(((Block) g).getHitwall())        moveBack();
+//            else {
+//
+//
+//                switch (((Block) g).getType()) {
+//                    case 0:
+//                        moveBack();
+//                        break;
+//                    case 1:
+//                        if (isMoveLeft || isMoveRight) {
+//                            moveBack();
+//                        }
+//                        break;
+//                    case 2:
+//                        if (isMoveUp || isMoveDown) {
+//                            moveBack();
+//                        }
+//                        break;
+//                    default:
+//                }
+//            }
         }
     }
 
@@ -161,8 +179,6 @@ public class Explorer extends GameObj{
             isMoveDown = true;
             this.currentImg= exDownImg;
         }
-
-
         updateRect();
     }
 
