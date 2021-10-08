@@ -11,19 +11,31 @@ public class ExplorerControl implements KeyListener {
     private final int down;
     private final int right;
     private final int left;
+    private final int space;
 
-    public ExplorerControl(Explorer ex,int up,int down,int left,int right){
+    public ExplorerControl(Explorer ex,int up,int down,int left,int right, int space){
         this.explorer = ex;
         this.down= down;
         this.up = up;
         this.left= left;
         this.right = right;
+        this.space = space;
+
 
     }
 
 
     @Override
     public void keyTyped(KeyEvent e) {
+        char keyTyped = e.getKeyChar();
+//        System.out.println(keyTyped);
+        if (keyTyped == 'q')
+        {
+            this.explorer.setScarabsActive(true);
+        }
+        else if (keyTyped == 'e')       this.explorer.setSwordActive(true);
+
+//        System.out.println("Type: "+ keyTyped);
 
     }
 
@@ -56,6 +68,9 @@ public class ExplorerControl implements KeyListener {
             this.explorer.unToggleRightPressed();
 
         }
+        if (keyPressed == space){
+            this.explorer.toggleSpacePressed();
+        }
 
     }
 
@@ -73,6 +88,9 @@ public class ExplorerControl implements KeyListener {
         }
         if (keyPressed == down) {
             this.explorer.unToggleDownPressed();
+        }
+        if (keyPressed == space){
+            this.explorer.unToggleSpacePressed();
         }
 
     }

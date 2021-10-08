@@ -25,11 +25,11 @@ public abstract class Monsters extends GameObj {
     final char RIGHT = 'r';
 
     public char facingdirc;
-    Explorer e ;
+//    Explorer e ;
 
-    protected Monsters(int x,int y, BufferedImage img, Explorer e ){
+    protected Monsters(int x,int y, BufferedImage img ){
         super(x,y,img);
-        this.e = e;
+//        this.e = e;
         this.speed = normalSpeed;
 
 
@@ -41,7 +41,7 @@ public abstract class Monsters extends GameObj {
     /**
      * check if explorer is in sight and react to it
      */
-    protected abstract void patrol( );
+    protected abstract void patrol(Explorer explorer );
 
     /**
      * handle moving action
@@ -89,7 +89,12 @@ public abstract class Monsters extends GameObj {
 
     @Override
     public void update() {
-        patrol();
+
+    }
+
+    @Override
+    public void update(Explorer explorer) {
+        patrol(explorer);
         move();
         updateRect();
     }

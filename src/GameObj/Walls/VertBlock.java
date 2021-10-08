@@ -8,7 +8,7 @@ public class VertBlock extends Block{
     private int rangeY1, rangeY2;
 
     public VertBlock(int x, int y, BufferedImage img, Explorer explorer, int rangeY1, int rangeY2){
-        super(x,y,img,explorer);
+        super(x,y,img);
         this.rangeY1 = rangeY1;
         this.rangeY2 = rangeY2;
 
@@ -22,7 +22,7 @@ public class VertBlock extends Block{
     }
 
     @Override
-    public void move() {
+    public void move(Explorer explorer) {
 
         //moveback
         if (this.y - rangeY1 < 0 ){
@@ -49,7 +49,7 @@ public class VertBlock extends Block{
     }
 
 //    @Override
-    public void backToStartPt() {
+    public void backToStartPt(Explorer explorer) {
 
 
         if(!this.rect.intersects(explorer.getRect())){

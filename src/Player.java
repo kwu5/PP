@@ -13,19 +13,25 @@ public class Player {
     //    private BufferedImage exImg;
     private boolean scarabsActive, unlockDoor;
     private int lives, score, scarabsNum;
-    private boolean swordGained;
     final int liveMax = 3;
 
+//    private Explorer e;
 
-    public Player(int lives) {
+
+    public Player(int lives, Explorer e) {
         this.lives = lives;
-        score = 0;
-        scarabsNum = 0;
+
+        //test todo
+        score = 1000;
+        scarabsNum = 100;
+
+//        score = 0;
+//        scarabsNum = 0;
 
         scarabsActive = false;
-        swordGained = false;
         unlockDoor = false;
     }
+
 
 
 
@@ -47,26 +53,26 @@ public class Player {
         if(lives < liveMax)        lives++;
     }
 
-    public void gainSword() {
-        swordGained = true;
-    }
+//    public void gainSword() {
+//        swordGained = true;
+//    }
 
     public void gainScarabs(){
+        System.out.println("gainScarabs");
         scarabsNum ++;
     }
 
-    public boolean isSwordGained() {
-        return swordGained;
-    }
+//    public boolean isSwordGained() {
+//        return swordGained;
+//    }
+//
+//    public boolean isUnlockDoor(){
+//        return unlockDoor;
+//    }
 
-    public boolean isUnlockDoor(){
-        return unlockDoor;
-    }
-
-
-    public void update(GameObj g) {
+    public void collision(GameObj g, Explorer e){
         if (g instanceof Monsters) {
-            if(g instanceof Mummy && isSwordGained()){
+            if(g instanceof Mummy && e.isSwordEquipped()){
                 gainPt(((Mummy) g).getPoints());
             }else {
                 lives--;
@@ -79,15 +85,43 @@ public class Player {
         } else if(g instanceof Scarabs){
             gainScarabs();
         } else if(g instanceof Sword){
-            gainSword();
+            e.equippedSword();
         }
 
-        if(g instanceof Door && swordGained)             unlockDoor = true;
+        if(g instanceof Door && e.isSwordEquipped())             unlockDoor = true;
+
+    }
+
+
+    public void update(GameObj g, Explorer e) {
+
+        collision(g,e);
+
+        //wield sword
+        if(g instanceof Explorer && ((Explorer) g).isWieldingSword() && ((Explorer) g).isSwordEquipped()){
+            score--;
+            if(score <0) score=0;
+        }
+
+        //active sword
+        if(g instanceof Explorer && ((Explorer) g).isSwordActive() && ((Explorer) g).isSwordEquipped()){
+            score -=100;
+            if(score <0) score =0;
+            e.setSwordActive(false);
+        }
+
+        //active scarab
+        if (g instanceof Explorer && ((Explorer) g).isScarabsActive() && scarabsNum>0){
+            scarabsNum--;
+            e.setScarabsActive(false);
+        }
+
 
 
     }
 
 
-
-
+    public boolean isUnlockDoor() {
+        return unlockDoor;
+    }
 }

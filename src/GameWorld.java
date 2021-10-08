@@ -11,11 +11,16 @@ import GameObj.Door;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 import static javax.imageio.ImageIO.read;
 
@@ -23,8 +28,9 @@ public class GameWorld extends JPanel {
 
 
     //screen and gamemap size
-    public static final int GAME_WIDTH = 1984;
-    public static final int GAME_HEIGHT = 1024;
+    private static final int offset = 1000;
+    public static final int GAME_WIDTH = 1984+offset;
+    public static final int GAME_HEIGHT = 1024+offset;
     private static final int SCREEN_WIDTH = 1024;
     private static final int SCREEN_HEIGHT = 720;
 
@@ -41,11 +47,13 @@ public class GameWorld extends JPanel {
     private ExplorerControl explorerControl;
     private int explorerSpeed = 3;         //set explorerSpeed
 
-    BufferedImage worldBackgroundImg;
-
-
     private BufferedImage world;
-    private Image background;
+    private Image worldBackgroundImg;
+    private BufferedImage darkness;
+
+
+
+    private BufferedImage background;
     private BufferedImage explorerUp, explorerDown, explorerLeft, explorerRight;
     private BufferedImage beetleUp, beetleDown, mummyDown, mummyLeft, mummyRight, mummyUp, scorpionLeft, scorpionRight;
     private BufferedImage block, blockHor, blockVert, wall1, wall2, doorImg;
@@ -77,39 +85,43 @@ public class GameWorld extends JPanel {
 
                 gameWorld.explorer.update();
 //                System.out.println(gameWorld.explorer.getX() + "     "+ gameWorld.explorer.getY());
-
                 for (Monsters m : gameWorld.monsters) {
 //                    System.out.println("monster");
-                    m.update();
+                    m.update(gameWorld.explorer);
                     gameWorld.checkCollision(m);
-                }
 
+
+                    if(m instanceof Mummy && gameWorld.explorer.isSwordActive() && !((Mummy) m).isFlee()) {
+                        System.out.println("mummy flee: sword");
+                        ((Mummy) m).flee();
+
+
+//                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    }
+                    if (m instanceof Mummy && gameWorld.explorer.isScarabsActive() && gameWorld.player.getScarabsNum()>0
+                            && !((Mummy) m).isFlee()){
+                        System.out.println("mummy flee: scarabs");
+                        ((Mummy) m).flee();
+//                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    }
+//
+                }
                 for (Wall w : gameWorld.walls) {
 //                    System.out.println("wall");
                     gameWorld.checkCollision(w);
                 }
-
                 for (Block b : gameWorld.blocks) {
 //                    System.out.println("block");
-                    b.update();
+                    b.update(gameWorld.explorer);
                     gameWorld.checkCollision(b);
                 }
-
                 for (PowerUpObj p:gameWorld.powerUpObjs) {
 //                    System.out.println("pobj");
                     p.update();
                     gameWorld.checkCollision(p);
                 }
-
                 gameWorld.checkCollision(gameWorld.door);
 //                System.out.println("door");
-
-
-
-//                for (Collision c:gameWorld.collisions) {
-//                    gameWorld.getCollisionResult(c.handleCollision());
-//
-//                }
 
                 //update gameEvent and delete object that should disappear
                 while(!gameWorld.collisions.empty()){
@@ -117,10 +129,12 @@ public class GameWorld extends JPanel {
                     gameWorld.gameEvent.updateEvent();
                     gameWorld.deleteCollisionObj(tem);
                 }
+                gameWorld.player.update(gameWorld.explorer,gameWorld.explorer);
 
 
                 gameWorld.gameEvent.updateEvent();
                 gameWorld.panel.update(gameWorld.player.getLives(),gameWorld.player.getScarabsNum(),gameWorld.player.getScore());
+
                 gameWorld.repaint();
 
                 //gameEvent
@@ -144,6 +158,7 @@ public class GameWorld extends JPanel {
 
         this.jf = new JFrame("PyramidPanic ");
         world = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
+
         try {
             //import image
             background = read(new File("resources/Background2.bmp"));
@@ -184,10 +199,13 @@ public class GameWorld extends JPanel {
 
 
             congratulation = read(new File("resources/Congratulation.gif"));
-            light = read(new File("resources/Light.bmp"));
+//            light = read(new File("resources/Light.bmp"));
+            light  = read(new File("resources/light1.png"));
             title = read(new File("resources/Title.gif"));
             panelImg = read(new File("resources/Panel.gif"));
-            gameOver = read(new File("resources/game_over.png"));
+//            gameOver = read(new File("resources/game_over.png"));
+            gameOver = read(new File("resources/game_over1.png"));
+
 //            gameOver = resize(gameOver,GAME_WIDTH,GAME_HEIGHT);
 //            congratulation = resize(congratulation,GAME_WIDTH,GAME_HEIGHT);
 
@@ -200,6 +218,9 @@ public class GameWorld extends JPanel {
                 for (int j = 0; j <= (GAME_WIDTH / tileWidth) - 1; j++)
                     g.drawImage(background, j * tileWidth, i * tileHeight, tileWidth, tileHeight, null);
 //            ImageIO.write(worldBackgroundImg, "bmp",new File("wbg.bmp"));
+
+            //darkness
+            darkness = new BufferedImage(GAME_WIDTH,GAME_HEIGHT,BufferedImage.TYPE_INT_RGB);
 
 
         } catch (IOException io) {
@@ -220,30 +241,25 @@ public class GameWorld extends JPanel {
 
 
         door  =  new Door(500,700,doorImg);
-        player = new Player(3);
-        explorer = new Explorer(800,700 , explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);  //todo  default loc
+
+        explorer = new Explorer(800,700 , explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);
+
+        player = new Player(3,explorer);
         explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT,
-                KeyEvent.VK_RIGHT);
+                KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE);
         gameEvent = new GameEvent(player,explorer,gameOver,congratulation, explorer.getX(),explorer.getY());
         panel = new Panel(SCREEN_WIDTH,SCREEN_HEIGHT,panelImg,lives,scarab);
 
 
 
-        //todo test filed
-        Beetle b1 = new Beetle(250, 50, beetleUp, beetleDown, explorer);
-        Mummy m1 = new Mummy(300, 100, mummyUp, mummyDown, mummyLeft, mummyRight, explorer);
-        Scorpion s1 = new Scorpion(180, 200, scorpionLeft, scorpionRight, explorer);
-        monsters.add(b1);
-        monsters.add(m1);
-        monsters.add(s1);
 
-        Wall w1 = new Wall(250, 500,wall1);
-        Wall w3 = new Wall(250,0,wall2);
-        Wall w2 = new Wall(450,550,wall2);
+        Wall w1 = new Wall(250,0,wall2);
+        Wall w2 = new Wall(250, 500,wall1);
+
         Wall w4 = new Wall(100,200,wall2);
-        Wall w5 = new Wall(300,200,wall1);
+        Wall w5 = new Wall(700,200,wall1);
 
-
+        Wall w3 = new Wall(450,550,wall2);
         Wall w6= new Wall(700,500,wall1);
         Wall w7 = new Wall(500,800,wall1);
 
@@ -256,23 +272,38 @@ public class GameWorld extends JPanel {
 //        walls.add(w6);
         walls.add(w7);
 
+
+        //todo test filed
+        Beetle b1 = new Beetle(250, 50, beetleUp, beetleDown,w1.getY(),w2.getY());
+        Scorpion s1 = new Scorpion(180, 200, scorpionLeft, scorpionRight,w4.getX(),w5.getX());
+        Mummy m1 = new Mummy(900, 100, mummyUp, mummyDown, mummyLeft, mummyRight,500,1500,50,300);
+        monsters.add(b1);
+        monsters.add(m1);
+        monsters.add(s1);
+
         Potion po1 = new Potion(270, 210, potion);
         Scarabs sc1 = new Scarabs(300, 210, scarab);
+        Scarabs sc2 = new Scarabs(400, 210, scarab);
+
         Sword sw1 = new Sword(350, 210, sword);
         Treasure tr1 = new Treasure(400, 210, treasure1, 40);
         Treasure tr2 = new Treasure(450, 210, treasure2, 50);
         powerUpObjs.add(po1);
         powerUpObjs.add(sc1);
+        powerUpObjs.add(sc2);
         powerUpObjs.add(sw1);
         powerUpObjs.add(tr1);
         powerUpObjs.add(tr2);
 
         Block bl0 = new NormalBlock(600, 600,block,explorer);
         Block bl1 = new VertBlock(700,700,blockVert,explorer,300,1400);
-        Block bl2 = new HorBlock(800,800,blockHor,explorer,600,1600);
+        Block bl2 = new HorBlock(800,800,blockHor,600,1600);
+//        Block bl3 = new HorBlock(250,200,blockHor,600,1600);
         blocks.add(bl0);
         blocks.add(bl1);
         blocks.add(bl2);
+//        blocks.add(bl3);
+
 
 
         this.jf.setLayout(new BorderLayout());
@@ -290,22 +321,45 @@ public class GameWorld extends JPanel {
 
     }
 
-    private int GetSubWorldX(Explorer explorer) {
-        int explorerX = explorer.getX() + explorerLeft.getWidth() / 2;
-        if (explorerX - SCREEN_WIDTH / 2 <= 0) return 0;
-        else if (explorerX + SCREEN_WIDTH / 2 >= GAME_WIDTH) return GAME_WIDTH - SCREEN_WIDTH;
-        else return explorerX - SCREEN_WIDTH / 2;
+    private int getSubWorldX(Explorer explorer) {
+        int explorerX = explorer.getX() ;
+
+        if (explorerX - SCREEN_WIDTH / 2 <= 0) {
+//            System.out.println("SWx: 0" );
+
+            return 0;
+        }
+//        else if (explorerX + SCREEN_WIDTH / 2 >= GAME_WIDTH) {
+//            System.out.println("G-S");
+//            return GAME_WIDTH - SCREEN_WIDTH;
+//        }
+        else {
+//            System.out.println("SWx: "+ (explorerX - SCREEN_WIDTH/2));
+            return explorerX - SCREEN_WIDTH / 2;
+        }
 
     }
 
-    private int GetSubWorldY(Explorer explorer) {
-        int explorerY = explorer.getY() + explorerLeft.getHeight() / 2;
-        if (explorerY - SCREEN_HEIGHT / 2 <= 0) return 0;
-        else if (explorerY + SCREEN_HEIGHT / 2 >= GAME_HEIGHT) return GAME_HEIGHT - SCREEN_HEIGHT;
-        else return explorerY - SCREEN_HEIGHT / 2;
+    private int getSubWorldY(Explorer explorer) {
+        int explorerY = explorer.getY();
+        if (explorerY - SCREEN_HEIGHT / 2 <= 0)
+        {
+//            System.out.println("SWy: 0");
 
+            return 0;
+        }
+//        else if (explorerY + SCREEN_HEIGHT / 2 >= GAME_HEIGHT) return GAME_HEIGHT - SCREEN_HEIGHT;
+        else
+        {
+//            System.out.println("SWy: "+ (explorerY - SCREEN_HEIGHT / 2));
 
+            return explorerY - SCREEN_HEIGHT / 2;
+        }
     }
+
+
+
+
 
     @Override
     public void paintComponent(Graphics g) {
@@ -317,7 +371,6 @@ public class GameWorld extends JPanel {
         buffer.drawImage(worldBackgroundImg, 0, 0, null);
 
 
-        //obj drawing//todo
 
         //test field todo
 
@@ -339,29 +392,42 @@ public class GameWorld extends JPanel {
         explorer.drawImage(buffer);
         door.drawImage(buffer);
 
-
+        //keep the explorer in sight
         int subworldX, subworldY;
-        subworldX = GetSubWorldX(explorer);
-        subworldY = GetSubWorldY(explorer);
+        subworldX = getSubWorldX(explorer);
+        subworldY = getSubWorldY(explorer);
+
+
+
+
+        BufferedImage worldSeen = world.getSubimage(subworldX, subworldY, SCREEN_WIDTH, SCREEN_HEIGHT);
+//        BufferedImage worldSeen = world.getSubimage(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        if(explorer.isSwordEquipped())          changeSight(buffer);
 
         panel.updateLoc(subworldX,subworldY);
         panel.drawImage(buffer);
 
-        //keep the explorer in sight
-        BufferedImage worldSeen = world.getSubimage(subworldX, subworldY, SCREEN_WIDTH, SCREEN_HEIGHT- panelImg.getHeight());
-        g2.drawImage(worldSeen, 0, 0, null);
 
         //gameEvent
-
-        int xOffset = SCREEN_WIDTH/2;
-        int yOffest = SCREEN_HEIGHT/2;
         if(gameEvent.isGameOver()){
-            buffer.drawImage(gameOver,subworldX,subworldY,null);
+//            buffer.drawImage(gameOver,GAME_WIDTH/2- gameOver.getWidth()/2,GAME_HEIGHT/2-gameOver.getHeight()/2,null);
+            buffer.drawImage(gameOver,subworldX+ 10,subworldY+10,null);
 //            gameEvent.drawImage(buffer,gameOver);
         }else if(gameEvent.isWin()){
 //            gameEvent.drawImage(buffer, congratulation);
-            buffer.drawImage(gameOver,explorer.getX(),explorer.getY(),null);
+            buffer.drawImage(congratulation,subworldX+ SCREEN_WIDTH/3,subworldY+ SCREEN_HEIGHT/3,null);
         }
+
+        g2.drawImage(worldSeen, 0, 0, null);
+
+//        System.out.println("---------------------------------------------------------");
+//        System.out.println("---------------------------------------------------------");
+//        System.out.println("---------------------------------------------------------");
+//        System.out.println("---------------------------------------------------------");
+
+
+
 
     }
 
@@ -376,7 +442,33 @@ public class GameWorld extends JPanel {
         return dimg;
     }
 
+    /**
+     * change sight after the equipping/wielding the sword
+     * @param buffer
+     */
+    private void changeSight(Graphics2D buffer){
+        int lightSubX = explorer.getX()+ explorerUp.getWidth()/2-light.getWidth()/2;
+        int lightSubY = explorer.getY() +explorerDown.getHeight()/2-light.getHeight()/2;
+        int lightWidth = light.getWidth();
+        int lightHeight = light.getHeight();
 
+        if(explorer.isWieldingSword()){
+            lightSubX -= 100;
+            lightSubY -= 100;
+            lightWidth = lightWidth *2 ;
+            lightHeight = lightHeight *2;
+        }
+
+        BufferedImage tem = world.getSubimage(lightSubX,lightSubY,lightWidth,lightHeight);
+        BufferedImage lightSight = new BufferedImage(tem.getWidth(),tem.getHeight(),tem.getType());
+
+
+        Graphics2D gTem = lightSight.createGraphics();
+        gTem.drawImage(tem,0,0,tem.getHeight(),tem.getWidth(),null);
+        buffer.drawImage(darkness,0,0,null);
+        buffer.drawImage(lightSight,lightSubX,lightSubY,null);
+//        buffer.drawImage(light,lightSubX,lightSubY,null);
+    }
 
     /**
      * check collision.
@@ -416,7 +508,7 @@ public class GameWorld extends JPanel {
         //check monster vs block/explorer/monster
         else if (g instanceof Monsters) {
             for (Block b : blocks) {
-                if (tem.intersects(b.getRect())) collisions.push(new Collision(g, b));
+                if (tem.intersects(b.getRect())) collisions.push(new Collision(b, g));
             }
 
             for (Monsters m : monsters) {
@@ -469,6 +561,13 @@ public class GameWorld extends JPanel {
         }catch (Exception e){
             System.out.println("getCollisionResultEX: "+ e.getMessage());
         }
+    }
+
+
+    public void updateExplorerSight(Explorer e){
+
+
+
     }
 
 

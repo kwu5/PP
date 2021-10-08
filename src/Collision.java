@@ -30,20 +30,21 @@ public class Collision {
         }
 
        //powerUpObj
-       if(obj1 instanceof PowerUpObj){
-           player.update(obj1);
+       if(obj1 instanceof PowerUpObj  && obj2 instanceof Explorer){
+
+           player.update(obj1,(Explorer) obj2);
            return obj1;
        }
 
        //monster
        if(obj1 instanceof Monsters && obj2 instanceof Explorer){
-           player.update(obj1);
+           player.update(obj1,(Explorer) obj2);
            return obj1;
        }
 
        //door
         if(obj1 instanceof Door && obj2 instanceof Explorer){
-            player.update(obj1);
+            player.update(obj1,(Explorer)obj2);
         }
 
 

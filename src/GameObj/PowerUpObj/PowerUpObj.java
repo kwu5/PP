@@ -1,6 +1,8 @@
 package GameObj.PowerUpObj;
 
 import GameObj.GameObj;
+import GameObj.Explorer;
+
 
 import java.awt.image.BufferedImage;
 
@@ -21,6 +23,8 @@ public abstract class PowerUpObj extends GameObj {
     public void collision(GameObj gameObj) {
     }
 
+    @Override
+    public void update(Explorer explorer) {
 
-
+    }
 }

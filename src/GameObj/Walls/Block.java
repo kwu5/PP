@@ -10,19 +10,20 @@ public abstract class Block extends GameObj {
 //    private int type;
     private boolean outOfRange, isPushed, atStartPt;
     protected int startX,startY, speed;
-    protected Explorer explorer;
+//    protected Explorer explorer;
 
 
 
     //verify type using 0,1,2 -> block, vertBlock, horBlocks
-    public Block(int x, int y, BufferedImage img, Explorer explorer ) {
+    public Block(int x, int y, BufferedImage img ) {
         super(x, y, img);
-        this.explorer = explorer;
+//        this.explorer = explorer;
         outOfRange = false;
         isPushed = false;
         atStartPt = true;
 //        speed = explorer.getSpeed();
-        speed = explorer.getSpeed()/2;
+//        speed = explorer.getSpeed()/2;
+        speed = 1;
 //        this.explorer = explorer;
         this.startX = x;
         this.startY = y;
@@ -138,8 +139,8 @@ public abstract class Block extends GameObj {
 //
 //    }
 
-    public abstract void backToStartPt();
-    public abstract void move();
+    public abstract void backToStartPt(Explorer explorer);
+    public abstract void move(Explorer explorer);
 //    public abstract void stopMovement();
 
 
@@ -148,7 +149,7 @@ public abstract class Block extends GameObj {
     @Override
     public void collision(GameObj g) {
         if (g instanceof Explorer) {
-            move();
+            move((Explorer) g);
         }
 //        System.out.println("collision call "+ g.getClass().getName());
 //        if(g instanceof Wall || g instanceof Block){
@@ -165,9 +166,12 @@ public abstract class Block extends GameObj {
 
     @Override
     public void update() {
-            updateRect();
-            backToStartPt();
+
     }
 
-
+    @Override
+    public void update(Explorer explorer) {
+        updateRect();
+        backToStartPt(explorer);
+    }
 }

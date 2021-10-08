@@ -14,6 +14,11 @@ public class Door extends GameObj{
     }
 
     @Override
+    public void update(Explorer explorer) {
+
+    }
+
+    @Override
     public void collision(GameObj gameObj) {
     }
 }

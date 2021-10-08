@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 public class NormalBlock extends Block{
 
     public NormalBlock(int x, int y, BufferedImage img, Explorer explorer){
-        super(x,y,img,explorer);
+        super(x,y,img);
     }
 
     @Override
@@ -17,12 +17,12 @@ public class NormalBlock extends Block{
     }
 
     @Override
-    public void backToStartPt() {
+    public void backToStartPt(Explorer explorer) {
 //
     }
 
     @Override
-    public void move() {
+    public void move(Explorer explorer) {
 
     }
 }

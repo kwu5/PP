@@ -2,37 +2,49 @@ package GameObj.Monsters;
 
 import GameObj.Explorer;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Beetle extends Monsters {
 
     private BufferedImage upImg, downImg;
+    private int rangeY1, rangeY2;
 
 
-    public Beetle(int x, int y, BufferedImage upImg, BufferedImage downImg,Explorer explorer ){
-        super(x,y, upImg, explorer);
+    public Beetle(int x, int y, BufferedImage upImg, BufferedImage downImg ,int rangeY1, int rangeY2){
+        super(x,y, upImg);
         this.upImg = upImg;
         this.downImg = downImg;
         this.facingdirc = UP;
+        this.rangeY1 = rangeY1;
+        this.rangeY2 = rangeY2;
+
     }
 
 
     @Override
-    protected void patrol() {
-        if(e.getX() == x) {
-            if(((facingdirc == 'u') && (e.getY() < this.y)) || ((facingdirc == 'd') && (e.getY() > this.y))){
-                speed = fastSpeed;
-//                System.out.println("beetle speed change");
-            }else{
-                speed = normalSpeed;
-//                System.out.println("beetle normal");
-            }
-        } else
-        {
-            speed = normalSpeed;
-//            System.out.println("beetle normal");
+    protected void patrol(Explorer e) {
 
+        int eY = e.getY();
+
+        //when the monster can see the character
+        if( ((e.getX()+e.getRect().getWidth()) > this.x) &&  ((e.getX() < (this.x+this.currentImg.getWidth())))){
+            //in hunting area
+            if (eY >= rangeY1 && e.getY() <= rangeY2)   {           //in range and facing monster
+                if(eY < this.y && this.facingdirc == UP){
+                    speed = fastSpeed;
+                }else if (eY > this.y && this.facingdirc == DOWN){
+                    speed = fastSpeed;
+                }
+            }
+        }else{
+            speed = normalSpeed;
         }
+
+
+
+
+
     }
 
 

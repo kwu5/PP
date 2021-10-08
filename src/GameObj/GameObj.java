@@ -24,9 +24,10 @@ public abstract class GameObj {
     public void setY(int y) {this.y = y;}
 
 
+    public BufferedImage getCurrentImg(){return currentImg;}
     public Rectangle getRect(){
         return rect;
-    }
+    };
     public void updateRect(){
         rect.setLocation(x,y);
     }
@@ -37,6 +38,7 @@ public abstract class GameObj {
     }
 
     public abstract void update();
+    public abstract void update(Explorer explorer);
     public abstract void collision(GameObj gameObj);
 
 

@@ -1,6 +1,8 @@
 package GameObj.Walls;
 
 import GameObj.GameObj;
+import GameObj.Explorer;
+
 
 import java.awt.image.BufferedImage;
 
@@ -21,5 +23,10 @@ public class Wall extends GameObj {
 
     @Override
     public void update() {
+    }
+
+    @Override
+    public void update(Explorer explorer) {
+
     }
 }

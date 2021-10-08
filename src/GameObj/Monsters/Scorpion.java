@@ -7,31 +7,38 @@ import java.awt.image.BufferedImage;
 public class Scorpion extends Monsters{
 
     private BufferedImage leftImg, rightImg;
+    private int rangeX1,rangeX2;
 
-    public Scorpion(int x, int y, BufferedImage leftImg, BufferedImage rightImg, Explorer explorer){
-        super(x,y,leftImg,explorer);
+    public Scorpion(int x, int y, BufferedImage leftImg, BufferedImage rightImg, int rangeX1, int rangeX2){
+        super(x,y,leftImg);
         this.leftImg = leftImg;
         this.rightImg = rightImg;
         facingdirc = LEFT;
+        this.rangeX1 = rangeX1;
+        this.rangeX2 =rangeX2;
     }
 
 
     @Override
-    protected void patrol() {
-        if(e.getY() == y) {
-            if(((facingdirc == 'l') && (e.getX() < this.x)) || ((facingdirc == 'r') && (e.getX() > this.x))){
-                speed = fastSpeed;
-//                System.out.println("scorpion speed change");
-            }else{
-                speed = normalSpeed;
-//                System.out.println("scorpion normal");
-            }
-        } else
-        {
-            speed = normalSpeed;
-//            System.out.println("scorpion normal");
+    protected void patrol(Explorer e) {
 
+        int eX = e.getX();
+
+        //when the monster can see explorer
+        if( ((e.getY()+e.getRect().getHeight()) > this.y) &&  ((e.getY() < (this.y+this.currentImg.getHeight())))){
+            //in hunting area
+            if (eX >= rangeX1 && eX <= rangeX2)   {
+                if(eX < this.x && this.facingdirc == LEFT){
+                    speed = fastSpeed;
+                }else if (eX > this.x && this.facingdirc == RIGHT){
+                    speed = fastSpeed;
+                }
+            }
+        }else{
+            speed = normalSpeed;
         }
+
+
     }
 
     @Override

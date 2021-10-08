@@ -1,10 +1,10 @@
 package GameObj;
 
-import GameObj.PowerUpObj.PowerUpObj;
+import GameObj.Monsters.Mummy;
+import GameObj.PowerUpObj.Sword;
 import GameObj.Walls.*;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Explorer extends GameObj{
@@ -17,8 +17,9 @@ public class Explorer extends GameObj{
     private Rectangle exRect;
     private int speed, normalSpeed;
 
+    private boolean isSwordEquipped, isWieldingSword, isScarabsActive , isSwordActive;
 
-    private boolean leftPressed, rightPressed, upPressed, downPressed;
+    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed;
     private boolean isMoveDown, isMoveLeft, isMoveRight , isMoveUp ;
 
 
@@ -28,6 +29,8 @@ public class Explorer extends GameObj{
 
         this.speed =speed;
 //        this.normalSpeed = speed;
+        this.isSwordEquipped =false;
+        this.isScarabsActive = false;
 
         this.currentImg = exDownImg;
         this.exUpImg = exUp;
@@ -70,6 +73,10 @@ public class Explorer extends GameObj{
         this.downPressed = false;
     }
 
+    public void toggleSpacePressed(){this.spacePressed = true;}
+    public void unToggleSpacePressed(){this.spacePressed = false;}
+
+
     private void moveUp(){
         y-=speed;
     }
@@ -90,6 +97,29 @@ public class Explorer extends GameObj{
         else if(isMoveRight)    x-=speed;
     }
 
+    public void equippedSword(){ isSwordEquipped = true;}
+    public void wieldingSword(){ isWieldingSword = true;}
+    public void setScarabsActive(boolean isScarabsActive){
+//        System.out.println("setScarabsActive: " + isScarabsActive);
+        this.isScarabsActive = isScarabsActive;         //try to active, not guarantee successful
+    }
+    
+    public void setSwordActive(boolean isSwordActive) {
+//        System.out.println("setSwordActive");
+        if (isSwordEquipped) {
+//            System.out.println("setSwordActive: "+ isSwordActive);
+            this.isSwordActive = isSwordActive;
+        }
+    }
+
+    public boolean isWieldingSword(){return isWieldingSword;}
+    public boolean isSwordEquipped(){return isSwordEquipped;}
+    public boolean isScarabsActive(){return isScarabsActive;}
+    public boolean isSwordActive(){return isSwordActive;}
+
+
+
+
     public int getSpeed(){return  speed;};
     public char getDirection(){
         if(isMoveDown)      return 'd';
@@ -97,6 +127,7 @@ public class Explorer extends GameObj{
         else if(isMoveLeft) return 'l';
         else     return 'r';
     }
+
 
     private void collisionBlock(Block block){
 //        speed = block.getSpeed();
@@ -114,6 +145,10 @@ public class Explorer extends GameObj{
         }
     }
 
+
+
+
+
     /**
      * explorer collision
      * @param g
@@ -123,33 +158,22 @@ public class Explorer extends GameObj{
         if (g instanceof Wall || g instanceof Door) {
 //            System.out.println("g is "+ g.getClass().getName());
             moveBack();
-        }else if (g instanceof Block){
+        }else if (g instanceof Block) {
             collisionBlock((Block) g);
-
-
-//            if(((Block) g).getHitwall())        moveBack();
-//            else {
-//
-//
-//                switch (((Block) g).getType()) {
-//                    case 0:
-//                        moveBack();
-//                        break;
-//                    case 1:
-//                        if (isMoveLeft || isMoveRight) {
-//                            moveBack();
-//                        }
-//                        break;
-//                    case 2:
-//                        if (isMoveUp || isMoveDown) {
-//                            moveBack();
-//                        }
-//                        break;
-//                    default:
-//                }
-//            }
+        }else if (g instanceof Sword){
+            equippedSword();
         }
+
+
+
     }
+
+
+    @Override
+    public void update(Explorer explorer) {
+
+    }
+
 
     @Override
     public void update(){
@@ -158,6 +182,13 @@ public class Explorer extends GameObj{
         isMoveUp = false;
         isMoveLeft = false;
         isMoveRight = false;
+        isWieldingSword = false;
+
+
+        if(spacePressed && isSwordEquipped){
+            wieldingSword();
+        }
+
 
         if(leftPressed){
             this.moveLeft();

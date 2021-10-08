@@ -8,8 +8,8 @@ public class HorBlock extends Block{
 
     private int rangeX1, rangeX2;
 
-    public HorBlock(int x, int y, BufferedImage img, Explorer explorer,int rangeX1, int rangeX2){
-        super(x,y,img,explorer);
+    public HorBlock(int x, int y, BufferedImage img,int rangeX1, int rangeX2){
+        super(x,y,img);
         this.rangeX1 = rangeX1;
         this.rangeX2 = rangeX2;
 
@@ -25,13 +25,17 @@ public class HorBlock extends Block{
     }
 
     @Override
-    public void move() {
+    public void move(Explorer explorer) {
+
+//        System.out.println("moving");
 
         //moveback
         if (this.x - rangeX1 < 0 ){
             pushRight(explorer.getSpeed());
+
         }else if(this.x - rangeX2 > 0){
             pushLeft(explorer.getSpeed());
+
         }
 
 
@@ -44,7 +48,8 @@ public class HorBlock extends Block{
     }
 
 
-    public void backToStartPt() {
+    public void backToStartPt(Explorer explorer) {
+//        System.out.println("bts");
         if(!this.rect.intersects(explorer.getRect())){
             if(this.x != startX){
                 if (this.x < startX)            pushRight(this.speed);
