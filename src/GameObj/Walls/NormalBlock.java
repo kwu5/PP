@@ -5,10 +5,10 @@ import GameObj.Explorer;
 
 import java.awt.image.BufferedImage;
 
-public class NormalBlock extends Block{
+public class NormalBlock extends Block {
 
-    public NormalBlock(int x, int y, BufferedImage img, Explorer explorer){
-        super(x,y,img);
+    public NormalBlock(int x, int y, BufferedImage img) {
+        super(x, y, img);
     }
 
     @Override

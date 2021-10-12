@@ -10,8 +10,8 @@ public abstract class PowerUpObj extends GameObj {
 
     final int pt;
 
-    PowerUpObj(int x, int y, BufferedImage img, int pt){
-        super(x,y,img);
+    PowerUpObj(int x, int y, BufferedImage img, int pt) {
+        super(x, y, img);
         this.pt = pt;
     }
 

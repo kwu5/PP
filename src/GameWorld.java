@@ -15,11 +15,10 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Stack;
-
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
+
+import javax.sound.sampled.*;
 
 
 import static javax.imageio.ImageIO.read;
@@ -29,28 +28,27 @@ public class GameWorld extends JPanel {
 
     //screen and gamemap size
     private static final int offset = 1000;
-    public static final int GAME_WIDTH = 1984+offset;
-    public static final int GAME_HEIGHT = 1024+offset;
+    public static final int GAME_WIDTH = 1984 + offset;
+    public static final int GAME_HEIGHT = 1024 + offset;
     private static final int SCREEN_WIDTH = 1024;
     private static final int SCREEN_HEIGHT = 720;
-
-
 
 
     private final String map1 = "resources/map1.csv";
 
     private Graphics2D buffer;
     private JFrame jf;
+    private SoundPlayer soundPlayer;
     private Player player;
     private Panel panel;
+    private TitlePage startScreen;
     private Explorer explorer;
     private ExplorerControl explorerControl;
-    private int explorerSpeed = 3;         //set explorerSpeed
+    private float explorerSpeed = 2;         //set explorerSpeed
 
     private BufferedImage world;
     private Image worldBackgroundImg;
     private BufferedImage darkness;
-
 
 
     private BufferedImage background;
@@ -59,28 +57,26 @@ public class GameWorld extends JPanel {
     private BufferedImage block, blockHor, blockVert, wall1, wall2, doorImg;
     private BufferedImage sword, scroll, treasure1, treasure2, potion, scarab;
     private BufferedImage lives, buttonHelp, buttonLoad, buttonQuit, buttonScores, buttonStart;
-    private BufferedImage congratulation, title,panelImg,light,background1, gameOver;
+    private BufferedImage congratulation, title, panelImg, light, background1, gameOver;
+
 
     private ArrayList<Monsters> monsters;
     private ArrayList<PowerUpObj> powerUpObjs;
     private ArrayList<Wall> walls;
     private ArrayList<Block> blocks;
-//    private ArrayList<Collision> collisions;
     private Stack<Collision> collisions;
     private GameEvent gameEvent;
     private Door door;
 
 
-
-//    private int tileHeight, tileWidth;
-
-
-
     public static void main(String[] args) {
         GameWorld gameWorld = new GameWorld();
-        gameWorld.init();
+
 
         try {
+            gameWorld.init();
+            gameWorld.soundPlayer.playBackgroundMusic();
+
             while (true) {
 
                 gameWorld.explorer.update();
@@ -88,18 +84,22 @@ public class GameWorld extends JPanel {
                 for (Monsters m : gameWorld.monsters) {
 //                    System.out.println("monster");
                     m.update(gameWorld.explorer);
+
+                    if (m.patrol(gameWorld.explorer)) {
+//                        gameWorld.soundPlayer.playSound(m);
+                    }
                     gameWorld.checkCollision(m);
 
 
-                    if(m instanceof Mummy && gameWorld.explorer.isSwordActive() && !((Mummy) m).isFlee()) {
+                    if (m instanceof Mummy && gameWorld.explorer.isSwordActive() && !((Mummy) m).isFlee()) {
                         System.out.println("mummy flee: sword");
                         ((Mummy) m).flee();
 
 
 //                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     }
-                    if (m instanceof Mummy && gameWorld.explorer.isScarabsActive() && gameWorld.player.getScarabsNum()>0
-                            && !((Mummy) m).isFlee()){
+                    if (m instanceof Mummy && gameWorld.explorer.isScarabsActive() && gameWorld.player.getScarabsNum() > 0
+                            && !((Mummy) m).isFlee()) {
                         System.out.println("mummy flee: scarabs");
                         ((Mummy) m).flee();
 //                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -115,7 +115,7 @@ public class GameWorld extends JPanel {
                     b.update(gameWorld.explorer);
                     gameWorld.checkCollision(b);
                 }
-                for (PowerUpObj p:gameWorld.powerUpObjs) {
+                for (PowerUpObj p : gameWorld.powerUpObjs) {
 //                    System.out.println("pobj");
                     p.update();
                     gameWorld.checkCollision(p);
@@ -124,27 +124,30 @@ public class GameWorld extends JPanel {
 //                System.out.println("door");
 
                 //update gameEvent and delete object that should disappear
-                while(!gameWorld.collisions.empty()){
+                while (!gameWorld.collisions.empty()) {
                     GameObj tem = gameWorld.collisions.pop().handleCollision(gameWorld.player);
                     gameWorld.gameEvent.updateEvent();
                     gameWorld.deleteCollisionObj(tem);
                 }
-                gameWorld.player.update(gameWorld.explorer,gameWorld.explorer);
+                gameWorld.player.update(gameWorld.explorer, gameWorld.explorer);
 
 
                 gameWorld.gameEvent.updateEvent();
-                gameWorld.panel.update(gameWorld.player.getLives(),gameWorld.player.getScarabsNum(),gameWorld.player.getScore());
+                gameWorld.panel.update(gameWorld.player.getLives(), gameWorld.player.getScarabsNum(), gameWorld.player.getScore());
 
                 gameWorld.repaint();
 
                 //gameEvent
-                if(gameWorld.gameEvent.isGameOver()){
+                if (gameWorld.gameEvent.isGameOver()) {
                     break;
                 }
-                if(gameWorld.gameEvent.isWin()){
+                if (gameWorld.gameEvent.isWin()) {
                     break;
                 }
                 Thread.sleep(1000 / 144);
+//                Thread.sleep(500);
+
+
             }
         } catch (InterruptedException interruptedException) {
             System.out.println(interruptedException);
@@ -154,12 +157,20 @@ public class GameWorld extends JPanel {
     }
 
 
-    private void init() {
+    private void init() throws Exception {
 
         this.jf = new JFrame("PyramidPanic ");
+
+
+        //sound player
+        soundPlayer = new SoundPlayer();
+
+
         world = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         try {
+
+
             //import image
             background = read(new File("resources/Background2.bmp"));
             explorerUp = read(new File("resources/Explorer_up.gif"));
@@ -200,7 +211,7 @@ public class GameWorld extends JPanel {
 
             congratulation = read(new File("resources/Congratulation.gif"));
 //            light = read(new File("resources/Light.bmp"));
-            light  = read(new File("resources/light1.png"));
+            light = read(new File("resources/light1.png"));
             title = read(new File("resources/Title.gif"));
             panelImg = read(new File("resources/Panel.gif"));
 //            gameOver = read(new File("resources/game_over.png"));
@@ -220,7 +231,19 @@ public class GameWorld extends JPanel {
 //            ImageIO.write(worldBackgroundImg, "bmp",new File("wbg.bmp"));
 
             //darkness
-            darkness = new BufferedImage(GAME_WIDTH,GAME_HEIGHT,BufferedImage.TYPE_INT_RGB);
+            darkness = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
+
+            explorer = new Explorer(0, 0, explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);
+
+            monsters = new ArrayList<>();
+            walls = new ArrayList<>();
+            powerUpObjs = new ArrayList<>();
+            blocks = new ArrayList<>();
+//        collisions = new ArrayList<>();
+            collisions = new Stack<>();
+
+
+            mapSetUp();
 
 
         } catch (IOException io) {
@@ -231,98 +254,88 @@ public class GameWorld extends JPanel {
         }
 
 
-        monsters = new ArrayList<>();
-        walls = new ArrayList<>();
-        powerUpObjs = new ArrayList<>();
-        blocks = new ArrayList<>();
-//        collisions = new ArrayList<>();
-        collisions = new Stack<>();
+//
+//        Wall w1 = new Wall(250,0,wall2);
+//        Wall w2 = new Wall(250, 500,wall1);
+////
+//        Wall w4 = new Wall(100,200,wall2);
+//        Wall w5 = new Wall(700,200,wall1);
+//
+//        Wall w3 = new Wall(450,550,wall2);
+//        Wall w6= new Wall(700,500,wall1);
+//        Wall w7 = new Wall(500,800,wall1);
+//
+//
+//        walls.add(w1);
+//        walls.add(w2);
+//        walls.add(w4);
+//        walls.add(w5);
+//        walls.add(w3);
+////        walls.add(w6);
+//        walls.add(w7);
 
 
-
-        door  =  new Door(500,700,doorImg);
-
-        explorer = new Explorer(800,700 , explorerUp, explorerDown, explorerLeft, explorerRight, explorerSpeed);
-
-        player = new Player(3,explorer);
+//            door  =  new Door(500,700,doorImg);
+        player = new Player(3, explorer);
         explorerControl = new ExplorerControl(explorer, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT,
                 KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE);
-        gameEvent = new GameEvent(player,explorer,gameOver,congratulation, explorer.getX(),explorer.getY());
-        panel = new Panel(SCREEN_WIDTH,SCREEN_HEIGHT,panelImg,lives,scarab);
-
-
-
-
-        Wall w1 = new Wall(250,0,wall2);
-        Wall w2 = new Wall(250, 500,wall1);
-
-        Wall w4 = new Wall(100,200,wall2);
-        Wall w5 = new Wall(700,200,wall1);
-
-        Wall w3 = new Wall(450,550,wall2);
-        Wall w6= new Wall(700,500,wall1);
-        Wall w7 = new Wall(500,800,wall1);
-
-
-        walls.add(w1);
-        walls.add(w2);
-        walls.add(w4);
-        walls.add(w5);
-        walls.add(w3);
-//        walls.add(w6);
-        walls.add(w7);
+        gameEvent = new GameEvent(player, explorer, gameOver, congratulation, explorer.getX(), explorer.getY());
+        panel = new Panel(SCREEN_WIDTH, SCREEN_HEIGHT, panelImg, lives, scarab);
 
 
         //todo test filed
-        Beetle b1 = new Beetle(250, 50, beetleUp, beetleDown,w1.getY(),w2.getY());
-        Scorpion s1 = new Scorpion(180, 200, scorpionLeft, scorpionRight,w4.getX(),w5.getX());
-        Mummy m1 = new Mummy(900, 100, mummyUp, mummyDown, mummyLeft, mummyRight,500,1500,50,300);
-        monsters.add(b1);
-        monsters.add(m1);
-        monsters.add(s1);
+//        Beetle b1 = new Beetle(250, 50, beetleUp, beetleDown,w1.getY(),w2.getY());
+//        Scorpion s1 = new Scorpion(180, 200, scorpionLeft, scorpionRight,w4.getX(),w5.getX());
+//        Mummy m1 = new Mummy(900, 100, mummyUp, mummyDown, mummyLeft, mummyRight,500,1500,50,300);
+//        monsters.add(b1);
+//        monsters.add(m1);
+//        monsters.add(s1);
+//
+//        Potion po1 = new Potion(270, 210, potion);
+//        Scarabs sc1 = new Scarabs(300, 210, scarab);
+//        Scarabs sc2 = new Scarabs(400, 210, scarab);
 
-        Potion po1 = new Potion(270, 210, potion);
-        Scarabs sc1 = new Scarabs(300, 210, scarab);
-        Scarabs sc2 = new Scarabs(400, 210, scarab);
-
-        Sword sw1 = new Sword(350, 210, sword);
-        Treasure tr1 = new Treasure(400, 210, treasure1, 40);
-        Treasure tr2 = new Treasure(450, 210, treasure2, 50);
-        powerUpObjs.add(po1);
-        powerUpObjs.add(sc1);
-        powerUpObjs.add(sc2);
-        powerUpObjs.add(sw1);
-        powerUpObjs.add(tr1);
-        powerUpObjs.add(tr2);
-
-        Block bl0 = new NormalBlock(600, 600,block,explorer);
-        Block bl1 = new VertBlock(700,700,blockVert,explorer,300,1400);
-        Block bl2 = new HorBlock(800,800,blockHor,600,1600);
-//        Block bl3 = new HorBlock(250,200,blockHor,600,1600);
-        blocks.add(bl0);
-        blocks.add(bl1);
-        blocks.add(bl2);
-//        blocks.add(bl3);
-
+//        Sword sw1 = new Sword(350, 210, sword);
+//        Treasure tr1 = new Treasure(400, 210, treasure1, 40);
+//        Treasure tr2 = new Treasure(450, 210, treasure2, 50);
+//        powerUpObjs.add(po1);
+//        powerUpObjs.add(sc1);
+//        powerUpObjs.add(sc2);
+//        powerUpObjs.add(sw1);
+//        powerUpObjs.add(tr1);
+//        powerUpObjs.add(tr2);
+//
+//        Block bl0 = new NormalBlock(600, 600,block);
+//        Block bl1 = new VertBlock(700,700,blockVert,300,1400);
+//        Block bl2 = new HorBlock(900,800,blockHor,400,1600);
+////        Block bl3 = new HorBlock(250,200,blockHor,600,1600);
+//        blocks.add(bl0);
+//        blocks.add(bl1);
+//        blocks.add(bl2);
+////        blocks.add(bl3);
+//
 
 
         this.jf.setLayout(new BorderLayout());
         this.jf.add(this);
-
         this.jf.addKeyListener(explorerControl);
-
         this.jf.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.jf.setResizable(false);
         this.jf.setLocationRelativeTo(null);
 
         this.jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.jf.setVisible(true);
+        this.jf.setVisible(false);
+
+
+        //startScreen setup
+        startScreen = new TitlePage(this.jf, buttonStart, buttonLoad, buttonHelp, buttonScores, buttonQuit);
+        startScreen.setUp();
 
 
     }
 
     private int getSubWorldX(Explorer explorer) {
-        int explorerX = explorer.getX() ;
+        int explorerX = explorer.getX();
 
         if (explorerX - SCREEN_WIDTH / 2 <= 0) {
 //            System.out.println("SWx: 0" );
@@ -342,15 +355,13 @@ public class GameWorld extends JPanel {
 
     private int getSubWorldY(Explorer explorer) {
         int explorerY = explorer.getY();
-        if (explorerY - SCREEN_HEIGHT / 2 <= 0)
-        {
+        if (explorerY - SCREEN_HEIGHT / 2 <= 0) {
 //            System.out.println("SWy: 0");
 
             return 0;
         }
 //        else if (explorerY + SCREEN_HEIGHT / 2 >= GAME_HEIGHT) return GAME_HEIGHT - SCREEN_HEIGHT;
-        else
-        {
+        else {
 //            System.out.println("SWy: "+ (explorerY - SCREEN_HEIGHT / 2));
 
             return explorerY - SCREEN_HEIGHT / 2;
@@ -358,7 +369,109 @@ public class GameWorld extends JPanel {
     }
 
 
+    //map set up
+    private void mapSetUp() throws Exception {
 
+        String map = "resources/map1 - Sheet1.csv";
+        int mxs = 35;
+        int mxe = 416 - 32 + 10;
+        int mys = 480;
+        int mye = 704 - 480 + 10;
+
+
+        Scanner scanner = new Scanner(new File(map));
+        char itemCode;
+
+        while (scanner.hasNext()) {
+
+            for (int i = 0; i < 31; i++) {          //row
+
+                String data = scanner.next();
+                String[] line = data.split(",");
+                int sightUnitX = wall1.getWidth();
+                int sightUnixY = wall1.getHeight();
+                int sight;
+                int type;
+
+
+
+                for (int j = 0; j < 52; j++) {      //column
+                    String item = line[j];
+                    if (item.length() > 0) {
+                        itemCode = item.charAt(0);
+                    } else {
+                        itemCode = 'n';
+                    }
+
+                    int xTem = j * wall1.getWidth();
+                    int yTem = i * wall1.getWidth();
+
+                    switch (itemCode) {
+                        case 'w':
+                            walls.add(new Wall(xTem, yTem, wall1));
+                            break;
+
+                        case 't':
+                            type = item.charAt(1);
+                            if (type == 'l') powerUpObjs.add(new Treasure(xTem, yTem, treasure1, 500));
+                            else powerUpObjs.add(new Treasure(xTem, yTem, treasure2, 800));
+                            break;
+
+                        case 'k':
+                            powerUpObjs.add(new Sword(xTem, yTem, sword));
+                            break;
+                        case 'c':
+                            powerUpObjs.add(new Scarabs(xTem, yTem, scarab));
+                            break;
+                        case 'p':
+                            powerUpObjs.add(new Potion(xTem, yTem, potion));
+                            break;
+                        case 'd':
+                            door = new Door(xTem, yTem, doorImg);
+                            break;
+
+
+                        case 'e':
+                            explorer.setX(xTem);
+                            explorer.setY(yTem);
+                            break;
+
+                        case 'b':
+                            sight = Character.getNumericValue(item.charAt(1));
+//                            System.out.println(sight);
+                            monsters.add(new Beetle(xTem, yTem, beetleUp, beetleDown, yTem - sight * sightUnixY, yTem));
+                            break;
+                        case 's':
+                            sight = Character.getNumericValue(item.charAt(1));
+//                            System.out.println(sight);
+                            monsters.add(new Scorpion(xTem, yTem, scorpionLeft, scorpionRight, xTem, xTem + sight * sightUnitX));
+                            break;
+                        case 'm':
+                            monsters.add(new Mummy(xTem, yTem, mummyUp, mummyDown, mummyLeft, mummyRight, mxs, mxe, mys, mye));
+                            break;
+                        case 'v':
+                            sight = Character.getNumericValue(item.charAt(1));
+
+                            blocks.add(new VertBlock(xTem, yTem, blockVert, yTem - sight * sightUnixY, yTem + sight * sightUnixY));
+                            break;
+                        case 'u':
+
+                            blocks.add(new NormalBlock(xTem, yTem, block));
+                            break;
+                        case 'h':
+                            sight = Character.getNumericValue(item.charAt(1));
+                            blocks.add(new HorBlock(xTem, yTem, blockHor, xTem - sight * sightUnitX, xTem + sight * sightUnitX));
+                            break;
+
+
+                        default:
+
+                    }
+                }
+            }
+        }
+
+    }
 
 
     @Override
@@ -371,9 +484,7 @@ public class GameWorld extends JPanel {
         buffer.drawImage(worldBackgroundImg, 0, 0, null);
 
 
-
-        //test field todo
-
+       
         for (Monsters m : monsters) {
             m.drawImage(buffer);
         }
@@ -382,12 +493,13 @@ public class GameWorld extends JPanel {
             p.drawImage(buffer);
         }
 
-        for (Wall w: walls) {
+        for (Wall w : walls) {
             w.drawImage(buffer);
         }
-        for (Block b:blocks){
+        for (Block b : blocks) {
             b.drawImage(buffer);
         }
+
 
         explorer.drawImage(buffer);
         door.drawImage(buffer);
@@ -398,25 +510,23 @@ public class GameWorld extends JPanel {
         subworldY = getSubWorldY(explorer);
 
 
-
-
         BufferedImage worldSeen = world.getSubimage(subworldX, subworldY, SCREEN_WIDTH, SCREEN_HEIGHT);
 //        BufferedImage worldSeen = world.getSubimage(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        if(explorer.isSwordEquipped())          changeSight(buffer);
+        if (explorer.isSwordEquipped()) changeSight(buffer);
 
-        panel.updateLoc(subworldX,subworldY);
+        panel.updateLoc(subworldX, subworldY);
         panel.drawImage(buffer);
 
 
         //gameEvent
-        if(gameEvent.isGameOver()){
+        if (gameEvent.isGameOver()) {
 //            buffer.drawImage(gameOver,GAME_WIDTH/2- gameOver.getWidth()/2,GAME_HEIGHT/2-gameOver.getHeight()/2,null);
-            buffer.drawImage(gameOver,subworldX+ 10,subworldY+10,null);
+            buffer.drawImage(gameOver, subworldX + 10, subworldY + 10, null);
 //            gameEvent.drawImage(buffer,gameOver);
-        }else if(gameEvent.isWin()){
+        } else if (gameEvent.isWin()) {
 //            gameEvent.drawImage(buffer, congratulation);
-            buffer.drawImage(congratulation,subworldX+ SCREEN_WIDTH/3,subworldY+ SCREEN_HEIGHT/3,null);
+            buffer.drawImage(congratulation, subworldX + SCREEN_WIDTH / 3, subworldY + SCREEN_HEIGHT / 3, null);
         }
 
         g2.drawImage(worldSeen, 0, 0, null);
@@ -427,52 +537,45 @@ public class GameWorld extends JPanel {
 //        System.out.println("---------------------------------------------------------");
 
 
-
-
     }
 
-    private BufferedImage resize(BufferedImage img, int weight, int height) {
-        Image tmp = img.getScaledInstance(weight, height, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(weight, height, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g2d = dimg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-
-        return dimg;
-    }
 
     /**
      * change sight after the equipping/wielding the sword
+     *
      * @param buffer
      */
-    private void changeSight(Graphics2D buffer){
-        int lightSubX = explorer.getX()+ explorerUp.getWidth()/2-light.getWidth()/2;
-        int lightSubY = explorer.getY() +explorerDown.getHeight()/2-light.getHeight()/2;
+    private void changeSight(Graphics2D buffer) {
+        int lightSubX = explorer.getX() + explorerUp.getWidth() / 2 - light.getWidth() / 2;
+        int lightSubY = explorer.getY() + explorerDown.getHeight() / 2 - light.getHeight() / 2;
         int lightWidth = light.getWidth();
         int lightHeight = light.getHeight();
 
-        if(explorer.isWieldingSword()){
+        if (explorer.isWieldingSword()) {
             lightSubX -= 100;
             lightSubY -= 100;
-            lightWidth = lightWidth *2 ;
-            lightHeight = lightHeight *2;
+            lightWidth = lightWidth * 2;
+            lightHeight = lightHeight * 2;
         }
 
-        BufferedImage tem = world.getSubimage(lightSubX,lightSubY,lightWidth,lightHeight);
-        BufferedImage lightSight = new BufferedImage(tem.getWidth(),tem.getHeight(),tem.getType());
+        if (lightSubX < 0) lightSubX = 0;
+        if (lightSubY < 0) lightSubY = 0;
+
+        BufferedImage tem = world.getSubimage(lightSubX, lightSubY, lightWidth, lightHeight);
+        BufferedImage lightSight = new BufferedImage(tem.getWidth(), tem.getHeight(), tem.getType());
 
 
         Graphics2D gTem = lightSight.createGraphics();
-        gTem.drawImage(tem,0,0,tem.getHeight(),tem.getWidth(),null);
-        buffer.drawImage(darkness,0,0,null);
-        buffer.drawImage(lightSight,lightSubX,lightSubY,null);
+        gTem.drawImage(tem, 0, 0, tem.getHeight(), tem.getWidth(), null);
+        buffer.drawImage(darkness, 0, 0, null);
+        buffer.drawImage(lightSight, lightSubX, lightSubY, null);
 //        buffer.drawImage(light,lightSubX,lightSubY,null);
     }
 
     /**
      * check collision.
      * priority : Wall>powerUpObj>monster>block>explorer
+     *
      * @param g
      */
     private void checkCollision(GameObj g) {
@@ -488,7 +591,9 @@ public class GameWorld extends JPanel {
 
 
             for (Monsters m : monsters) {
-                if (tem.intersects(m.getRect())) collisions.push(new Collision(g, m));
+                if (tem.intersects(m.getRect())) {
+                    collisions.push(new Collision(g, m));
+                }
             }
 
             for (Block b : blocks) {
@@ -531,47 +636,36 @@ public class GameWorld extends JPanel {
                 if (tem.intersects(b.getRect())) collisions.push(new Collision(g, b));
             }
             if (tem.intersects(explorer.getRect())) {
-                collisions.push(new Collision(g,explorer));
+                collisions.push(new Collision(g, explorer));
 //                System.out.println(" block collision");
 
             }
         }
         //door vs explorer
-        if (g instanceof Door && tem.intersects(explorer.getRect())  ) {
+        if (g instanceof Door && tem.intersects(explorer.getRect())) {
 //            System.out.println("doooooooooor");
-            collisions.push(new Collision(g,explorer));
+            collisions.push(new Collision(g, explorer));
         }
 
     }
 
     /**
      * Delete game objects;
+     *
      * @param g
      */
-    public void deleteCollisionObj(GameObj g){
+    public void deleteCollisionObj(GameObj g) {
 
-        if(g == null)   return;
-        try{
-            if(g instanceof PowerUpObj)     powerUpObjs.remove(g);
-            else if(g instanceof Monsters)      monsters.remove(g);
-
-
+        if (g == null) return;
+        try {
+            if (g instanceof PowerUpObj) powerUpObjs.remove(g);
+            else if (g instanceof Monsters) monsters.remove(g);
 
 
-        }catch (Exception e){
-            System.out.println("getCollisionResultEX: "+ e.getMessage());
+        } catch (Exception e) {
+            System.out.println("getCollisionResultEX: " + e.getMessage());
         }
     }
-
-
-    public void updateExplorerSight(Explorer e){
-
-
-
-    }
-
-
-
 
 
 }

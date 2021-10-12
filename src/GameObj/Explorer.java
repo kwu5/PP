@@ -7,29 +7,28 @@ import GameObj.Walls.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Explorer extends GameObj{
-
+public class Explorer extends GameObj {
 
 
     private int imgWidth, imgHeight;
     private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
 
     private Rectangle exRect;
-    private int speed, normalSpeed;
+    private float speed;
 
-    private boolean isSwordEquipped, isWieldingSword, isScarabsActive , isSwordActive;
+    private boolean isSwordEquipped, isWieldingSword, isScarabsActive, isSwordActive;
 
     private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed;
-    private boolean isMoveDown, isMoveLeft, isMoveRight , isMoveUp ;
+    private boolean isMoveDown, isMoveLeft, isMoveRight, isMoveUp;
 
 
-    public Explorer( int x,int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight,
-    int speed){
-        super(x,y, exUp);
+    public Explorer(int x, int y, BufferedImage exUp, BufferedImage exDown, BufferedImage exLeft, BufferedImage exRight,
+                    float speed) {
+        super(x, y, exUp);
 
-        this.speed =speed;
+        this.speed = speed;
 //        this.normalSpeed = speed;
-        this.isSwordEquipped =false;
+        this.isSwordEquipped = false;
         this.isScarabsActive = false;
 
         this.currentImg = exDownImg;
@@ -41,8 +40,7 @@ public class Explorer extends GameObj{
         this.imgHeight = exUpImg.getHeight();
         this.imgWidth = exUpImg.getWidth();
 
-        this.exRect = new Rectangle(x,y,imgWidth,imgHeight);
-
+        this.exRect = new Rectangle(x + 100, y + 100, imgWidth - 100, imgHeight - 100);
 
 
     }
@@ -51,59 +49,81 @@ public class Explorer extends GameObj{
     public void toggleRightPressed() {
         this.rightPressed = true;
     }
+
     public void toggleLeftPressed() {
         this.leftPressed = true;
     }
+
     public void toggleUpPressed() {
         this.upPressed = true;
     }
+
     public void toggleDownPressed() {
         this.downPressed = true;
     }
+
     public void unToggleRightPressed() {
         this.rightPressed = false;
     }
+
     public void unToggleLeftPressed() {
         this.leftPressed = false;
     }
+
     public void unToggleUpPressed() {
         this.upPressed = false;
     }
+
     public void unToggleDownPressed() {
         this.downPressed = false;
     }
 
-    public void toggleSpacePressed(){this.spacePressed = true;}
-    public void unToggleSpacePressed(){this.spacePressed = false;}
+    public void toggleSpacePressed() {
+        this.spacePressed = true;
+    }
+
+    public void unToggleSpacePressed() {
+        this.spacePressed = false;
+    }
 
 
-    private void moveUp(){
-        y-=speed;
+    private void moveUp() {
+        y -= speed;
     }
-    private void moveDown(){
-        y+=speed;
+
+    private void moveDown() {
+        y += speed;
     }
-    private void moveLeft(){
-        x-=speed;
+
+    private void moveLeft() {
+        x -= speed;
     }
-    private void moveRight(){
-        x+=speed;
+
+    private void moveRight() {
+        x += speed;
     }
-    public void moveBack(){
+
+    public void moveBack() {
 //        System.out.println("moveback");
-        if(isMoveDown)      y-=speed;
-        else if(isMoveUp)     y+= speed;
-        else if(isMoveLeft)     x+= speed;
-        else if(isMoveRight)    x-=speed;
+        if (isMoveDown) y -= speed;
+        else if (isMoveUp) y += speed;
+        else if (isMoveLeft) x += speed;
+        else if (isMoveRight) x -= speed;
     }
 
-    public void equippedSword(){ isSwordEquipped = true;}
-    public void wieldingSword(){ isWieldingSword = true;}
-    public void setScarabsActive(boolean isScarabsActive){
+    public void equippedSword() {
+        isSwordEquipped = true;
+    }
+
+    public void wieldingSword() {
+        isWieldingSword = true;
+    }
+
+    public void setScarabsActive(boolean isScarabsActive) {
 //        System.out.println("setScarabsActive: " + isScarabsActive);
         this.isScarabsActive = isScarabsActive;         //try to active, not guarantee successful
     }
-    
+
     public void setSwordActive(boolean isSwordActive) {
 //        System.out.println("setSwordActive");
         if (isSwordEquipped) {
@@ -112,45 +132,57 @@ public class Explorer extends GameObj{
         }
     }
 
-    public boolean isWieldingSword(){return isWieldingSword;}
-    public boolean isSwordEquipped(){return isSwordEquipped;}
-    public boolean isScarabsActive(){return isScarabsActive;}
-    public boolean isSwordActive(){return isSwordActive;}
+    public boolean isWieldingSword() {
+        return isWieldingSword;
+    }
 
+    public boolean isSwordEquipped() {
+        return isSwordEquipped;
+    }
 
+    public boolean isScarabsActive() {
+        return isScarabsActive;
+    }
 
-
-    public int getSpeed(){return  speed;};
-    public char getDirection(){
-        if(isMoveDown)      return 'd';
-        else if(isMoveUp)   return 'u';
-        else if(isMoveLeft) return 'l';
-        else     return 'r';
+    public boolean isSwordActive() {
+        return isSwordActive;
     }
 
 
-    private void collisionBlock(Block block){
+    public float getSpeed() {
+        return speed;
+    }
+
+    ;
+
+    public char getDirection() {
+        if (isMoveDown) return 'd';
+        else if (isMoveUp) return 'u';
+        else if (isMoveLeft) return 'l';
+        else return 'r';
+    }
+
+
+    private void collisionBlock(Block block) {
 //        speed = block.getSpeed();
-        if (block instanceof NormalBlock){
+        if (block instanceof NormalBlock) {
             moveBack();
-        }else if(block instanceof HorBlock){
-            if(getDirection() == 'u' || getDirection() == 'd' || block.isOutOfRange()){
+        } else if (block instanceof HorBlock) {
+            if (getDirection() == 'u' || getDirection() == 'd' || block.isOutOfRange()) {
                 moveBack();
 
             }
-        }else if(block instanceof VertBlock){
-            if(getDirection() == 'l' || getDirection()=='r'||block.isOutOfRange()){
+        } else if (block instanceof VertBlock) {
+            if (getDirection() == 'l' || getDirection() == 'r' || block.isOutOfRange()) {
                 moveBack();
             }
         }
     }
 
 
-
-
-
     /**
      * explorer collision
+     *
      * @param g
      */
     @Override
@@ -158,12 +190,11 @@ public class Explorer extends GameObj{
         if (g instanceof Wall || g instanceof Door) {
 //            System.out.println("g is "+ g.getClass().getName());
             moveBack();
-        }else if (g instanceof Block) {
+        } else if (g instanceof Block) {
             collisionBlock((Block) g);
-        }else if (g instanceof Sword){
+        } else if (g instanceof Sword) {
             equippedSword();
         }
-
 
 
     }
@@ -176,7 +207,7 @@ public class Explorer extends GameObj{
 
 
     @Override
-    public void update(){
+    public void update() {
 
         isMoveDown = false;
         isMoveUp = false;
@@ -185,37 +216,33 @@ public class Explorer extends GameObj{
         isWieldingSword = false;
 
 
-        if(spacePressed && isSwordEquipped){
+        if (spacePressed && isSwordEquipped) {
             wieldingSword();
         }
 
 
-        if(leftPressed){
+        if (leftPressed) {
             this.moveLeft();
             isMoveLeft = true;
             this.currentImg = exLeftImg;
         }
-        if(rightPressed){
+        if (rightPressed) {
             this.moveRight();
             isMoveRight = true;
             this.currentImg = exRightImg;
         }
-        if(upPressed){
+        if (upPressed) {
             this.moveUp();
             isMoveUp = true;
-            this.currentImg= exUpImg;
+            this.currentImg = exUpImg;
         }
-        if(downPressed){
+        if (downPressed) {
             this.moveDown();
             isMoveDown = true;
-            this.currentImg= exDownImg;
+            this.currentImg = exDownImg;
         }
         updateRect();
     }
-
-
-
-
 
 
 }

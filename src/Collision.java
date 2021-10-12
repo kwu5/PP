@@ -6,7 +6,7 @@ import GameObj.PowerUpObj.PowerUpObj;
 import GameObj.Walls.Block;
 import GameObj.Walls.Wall;
 
-public class Collision {
+public class Collision extends SoundPlayer {
 
     private GameObj obj1, obj2;
 
@@ -22,37 +22,30 @@ public class Collision {
 
 
 //       obj1.collision(obj2);
-       obj2.collision(obj1);
+        obj2.collision(obj1);
 
-       //block special
-        if (obj1 instanceof Block){
+        //block special
+        if (obj1 instanceof Block) {
             obj1.collision(obj2);
         }
 
-       //powerUpObj
-       if(obj1 instanceof PowerUpObj  && obj2 instanceof Explorer){
+        //powerUpObj
+        if (obj1 instanceof PowerUpObj && obj2 instanceof Explorer) {
 
-           player.update(obj1,(Explorer) obj2);
-           return obj1;
-       }
-
-       //monster
-       if(obj1 instanceof Monsters && obj2 instanceof Explorer){
-           player.update(obj1,(Explorer) obj2);
-           return obj1;
-       }
-
-       //door
-        if(obj1 instanceof Door && obj2 instanceof Explorer){
-            player.update(obj1,(Explorer)obj2);
+            player.update(obj1, (Explorer) obj2);
+            return obj1;
         }
 
+        //monster
+        if (obj1 instanceof Monsters && obj2 instanceof Explorer) {
+            player.update(obj1, (Explorer) obj2);
+            return obj1;
+        }
 
-
-
-
-
-
+        //door
+        if (obj1 instanceof Door && obj2 instanceof Explorer) {
+            player.update(obj1, (Explorer) obj2);
+        }
 
 
 //

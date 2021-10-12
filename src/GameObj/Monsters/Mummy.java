@@ -16,7 +16,6 @@ public class Mummy extends Monsters {
     private Rectangle movingArea;
 
 
-
     public Mummy(int x, int y, BufferedImage mUp, BufferedImage mDown, BufferedImage mLeft, BufferedImage mRight
             , int rangeX1, int rangeX2, int rangeY1, int rangeY2) {
         super(x, y, mUp);
@@ -38,7 +37,7 @@ public class Mummy extends Monsters {
 
 
     @Override
-    protected void patrol(Explorer e) {
+    public boolean patrol(Explorer e) {
 
         //when the monster can see the character
         if (((e.getX() + e.getRect().getWidth()) > this.x) && ((e.getX() < (this.x + this.currentImg.getWidth())))) {
@@ -47,7 +46,8 @@ public class Mummy extends Monsters {
                 if ((e.getY() < this.y && facingdirc == UP) || (e.getY() > this.y && facingdirc == DOWN)) {
                     speed = fastSpeed;
                     explorerInSight = true;
-                    System.out.println("Y chase");
+                    return true;
+//                    System.out.println("Y chase");
                 }
             }
         } else if (((e.getY() + e.getRect().getHeight()) > this.y) && ((e.getY() < (this.y + this.currentImg.getHeight())))) {
@@ -56,41 +56,31 @@ public class Mummy extends Monsters {
                 if ((e.getX() < this.x && facingdirc == LEFT) || (e.getX() > this.x && facingdirc == RIGHT)) {
                     speed = fastSpeed;
                     explorerInSight = true;
-                    System.out.println("X chase");
+                    return true;
+//                    System.out.println("X chase");
 
                 }
             }
-        }
-
-
-//        if(((e.getX()+e.getRect().getWidth()) > this.x) &&  ((e.getX() < (this.x+this.currentImg.getWidth())))){
-//            if((e.getY() < this.y && facingdirc == UP) || (e.getY() > this.y && facingdirc == DOWN))
-//            {
-//                speed = fastSpeed;
-//                explorerInSight = true;
-//            }
-//        }
-//        else if(((e.getY()+e.getRect().getHeight()) > this.y) &&  ((e.getY() < (this.y+this.currentImg.getHeight())))){
-//            if((e.getX() < this.x && facingdirc == LEFT) || (e.getX() > this.x && facingdirc == RIGHT))
-//            {
-//                speed = fastSpeed;
-//                explorerInSight = true;
-//            }
-//
-//        }
-        else {
+        } else {
             speed = normalSpeed;
             explorerInSight = false;
+            return false;
         }
+        return false;
     }
 
 
-    public void setFlee(boolean isFlee){ this.isFlee = isFlee;}
-    public boolean isFlee(){return isFlee;}
+    public void setFlee(boolean isFlee) {
+        this.isFlee = isFlee;
+    }
 
-    public void flee( ) {
+    public boolean isFlee() {
+        return isFlee;
+    }
 
-        if(speed == fastSpeed){
+    public void flee() {
+
+        if (speed == fastSpeed) {
             moveOpposite();
             speed = normalSpeed;
         }
@@ -156,19 +146,20 @@ public class Mummy extends Monsters {
         }
 
         //check flee
-        if(isFlee){
+        if (isFlee) {
             flee();
             System.out.println("flee");
         }
 
         move();
         updateRect();
-        }
+    }
 
     @Override
     public void drawImage(Graphics g) {
         super.drawImage(g);
-        g.drawRect(rangeX1,rangeY1,rangeX2,rangeY2);
+        g.drawRect(rangeX1, rangeY1, rangeX2, rangeY2);
+
     }
 }
 

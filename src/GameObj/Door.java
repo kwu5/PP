@@ -2,10 +2,10 @@ package GameObj;
 
 import java.awt.image.BufferedImage;
 
-public class Door extends GameObj{
+public class Door extends GameObj {
 
-    public Door(int x, int y, BufferedImage image){
-        super(x,y,image);
+    public Door(int x, int y, BufferedImage image) {
+        super(x, y, image);
     }
 
 

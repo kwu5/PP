@@ -11,11 +11,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 
-
 public abstract class Monsters extends GameObj {
 
 
-    final int normalSpeed = 1;//set up monster speed  //todo
+    final int normalSpeed = 1;//set up monster speed
     final int fastSpeed = 2;
     public int speed;
 
@@ -27,8 +26,8 @@ public abstract class Monsters extends GameObj {
     public char facingdirc;
 //    Explorer e ;
 
-    protected Monsters(int x,int y, BufferedImage img ){
-        super(x,y,img);
+    protected Monsters(int x, int y, BufferedImage img) {
+        super(x, y, img);
 //        this.e = e;
         this.speed = normalSpeed;
 
@@ -41,55 +40,69 @@ public abstract class Monsters extends GameObj {
     /**
      * check if explorer is in sight and react to it
      */
-    protected abstract void patrol(Explorer explorer );
+    public abstract boolean patrol(Explorer explorer);
 
     /**
      * handle moving action
      */
     protected abstract void move();
 
-    protected void moveUp(BufferedImage upImg){
-        this.currentImg= upImg;
+    protected void moveUp(BufferedImage upImg) {
+        this.currentImg = upImg;
         facingdirc = UP;
-        y-=speed;}
+        y -= speed;
+    }
 
-    protected void moveDown(BufferedImage downImg){
-        this.currentImg= downImg;
+    protected void moveDown(BufferedImage downImg) {
+        this.currentImg = downImg;
         facingdirc = DOWN;
-        y+=speed;}
+        y += speed;
+    }
 
-    protected void moveLeft(BufferedImage leftImg){
-        this.currentImg= leftImg;
+    protected void moveLeft(BufferedImage leftImg) {
+        this.currentImg = leftImg;
         facingdirc = LEFT;
-        x-=speed;}
+        x -= speed;
+    }
 
-    protected void moveRight(BufferedImage rightImg){
-        this.currentImg= rightImg;
+    protected void moveRight(BufferedImage rightImg) {
+        this.currentImg = rightImg;
         facingdirc = RIGHT;
-        x+= speed;}
+        x += speed;
+    }
 
-    public void moveOpposite(){
-        switch (this.facingdirc) {
-            case UP -> facingdirc = DOWN;
-            case DOWN -> facingdirc = UP;
-            case LEFT -> facingdirc = RIGHT;
-            case RIGHT -> facingdirc = LEFT;
-            default -> System.out.println("MoveOpposite: invalid direction");
+    public void moveOpposite() {
+        switch (facingdirc) {
+            case UP:
+                facingdirc = DOWN;
+                break;
+            case DOWN:
+                facingdirc = UP;
+                break;
+            case LEFT:
+                facingdirc = RIGHT;
+                break;
+            case RIGHT:
+                facingdirc = LEFT;
+                break;
+            default:
+                System.out.println("MoveOpposite: invalid direction");
         }
+//        System.out.println(facingdirc);
+
     }
 
     @Override
     public void collision(GameObj g) {
-        if(g instanceof Wall || g instanceof Monsters || g instanceof Block || g instanceof Door)
-        {
-//            System.out.println("g is "+ g.getClass().getName());
+//        if(g instanceof Wall || g instanceof Monsters || g instanceof Block || g instanceof Door)
+        if (g instanceof Wall || g instanceof Block || g instanceof Door) {
+//            System.out.println(g.getClass().getName()+ "move opposite");
             moveOpposite();
         }
     }
 
     @Override
     public void update() {
-
     }
 
     @Override

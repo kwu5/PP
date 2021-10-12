@@ -11,8 +11,8 @@ public class Beetle extends Monsters {
     private int rangeY1, rangeY2;
 
 
-    public Beetle(int x, int y, BufferedImage upImg, BufferedImage downImg ,int rangeY1, int rangeY2){
-        super(x,y, upImg);
+    public Beetle(int x, int y, BufferedImage upImg, BufferedImage downImg, int rangeY1, int rangeY2) {
+        super(x, y, upImg);
         this.upImg = upImg;
         this.downImg = downImg;
         this.facingdirc = UP;
@@ -23,26 +23,27 @@ public class Beetle extends Monsters {
 
 
     @Override
-    protected void patrol(Explorer e) {
+    public boolean patrol(Explorer e) {
 
         int eY = e.getY();
 
         //when the monster can see the character
-        if( ((e.getX()+e.getRect().getWidth()) > this.x) &&  ((e.getX() < (this.x+this.currentImg.getWidth())))){
+        if (((e.getX() + e.getRect().getWidth()) > this.x) && ((e.getX() < (this.x + this.currentImg.getWidth())))) {
             //in hunting area
-            if (eY >= rangeY1 && e.getY() <= rangeY2)   {           //in range and facing monster
-                if(eY < this.y && this.facingdirc == UP){
+            if (eY >= rangeY1 && e.getY() <= rangeY2) {           //in range and facing monster
+                if (eY < this.y && this.facingdirc == UP) {
                     speed = fastSpeed;
-                }else if (eY > this.y && this.facingdirc == DOWN){
+                    return true;
+                } else if (eY > this.y && this.facingdirc == DOWN) {
                     speed = fastSpeed;
+                    return true;
                 }
             }
-        }else{
+        } else {
             speed = normalSpeed;
+            return false;
         }
-
-
-
+        return false;
 
 
     }
@@ -50,9 +51,9 @@ public class Beetle extends Monsters {
 
     @Override
     protected void move() {
-        if(facingdirc == UP)        moveUp(upImg);
-        else if(facingdirc == DOWN)         moveDown(downImg);
-        else System.out.println("invalid direction : "+ this.getClass());
+        if (facingdirc == UP) moveUp(upImg);
+        else if (facingdirc == DOWN) moveDown(downImg);
+        else System.out.println("invalid direction : " + this.getClass());
     }
 
 

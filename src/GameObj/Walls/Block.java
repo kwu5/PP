@@ -3,19 +3,21 @@ package GameObj.Walls;
 import GameObj.GameObj;
 import GameObj.Explorer;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public abstract class Block extends GameObj {
 
-//    private int type;
+    //    private int type;
     private boolean outOfRange, isPushed, atStartPt;
-    protected int startX,startY, speed;
-//    protected Explorer explorer;
-
+    protected int startX, startY;
+    protected float speed;
+    //    protected Explorer explorer;
+    protected Rectangle backToStartRect;
 
 
     //verify type using 0,1,2 -> block, vertBlock, horBlocks
-    public Block(int x, int y, BufferedImage img ) {
+    public Block(int x, int y, BufferedImage img) {
         super(x, y, img);
 //        this.explorer = explorer;
         outOfRange = false;
@@ -23,13 +25,14 @@ public abstract class Block extends GameObj {
         atStartPt = true;
 //        speed = explorer.getSpeed();
 //        speed = explorer.getSpeed()/2;
-        speed = 1;
+        speed = 1f;
 //        this.explorer = explorer;
         this.startX = x;
         this.startY = y;
+
+        backToStartRect = new Rectangle(x - img.getWidth(), y - img.getHeight(), 2 * img.getWidth(), 2 * img.getHeight());
+
     }
-
-
 
 
 //    public int getType(){
@@ -40,7 +43,7 @@ public abstract class Block extends GameObj {
 //        return hitWall;
 //    }
 
-//    public boolean isOutOfRange(){return outOfRange;}
+    //    public boolean isOutOfRange(){return outOfRange;}
     public abstract boolean isOutOfRange();
 
 
@@ -51,17 +54,19 @@ public abstract class Block extends GameObj {
 //    }
 
 
-
-    public void pushLeft(int speed){
+    public void pushLeft(float speed) {
         this.x -= speed;
     }
-    public void pushRight(int speed){
+
+    public void pushRight(float speed) {
         this.x += speed;
     }
-    public void pushUp(int speed){
+
+    public void pushUp(float speed) {
         this.y -= speed;
     }
-    public void pushDown(int speed){
+
+    public void pushDown(float speed) {
         this.y += speed;
     }
 
@@ -138,8 +143,8 @@ public abstract class Block extends GameObj {
 //        }
 //
 //    }
-
     public abstract void backToStartPt(Explorer explorer);
+
     public abstract void move(Explorer explorer);
 //    public abstract void stopMovement();
 
@@ -157,7 +162,6 @@ public abstract class Block extends GameObj {
 //        }else
 
 
-
 //        if (g instanceof Explorer){
 //
 //
@@ -173,5 +177,12 @@ public abstract class Block extends GameObj {
     public void update(Explorer explorer) {
         updateRect();
         backToStartPt(explorer);
+    }
+
+    @Override
+    public void updateRect() {
+        super.updateRect();
+        backToStartRect.setLocation(x - currentImg.getWidth() / 2, y - currentImg.getHeight() / 2);
+
     }
 }
