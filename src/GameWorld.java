@@ -32,6 +32,12 @@ public class GameWorld extends JPanel {
     public static final int GAME_HEIGHT = 1024 + offset;
     private static final int SCREEN_WIDTH = 1024;
     private static final int SCREEN_HEIGHT = 720;
+//
+//    private static final int offset = 500;
+//    public static final int GAME_WIDTH = 1024 + offset;
+//    public static final int GAME_HEIGHT = 720 + offset;
+//    private static final int SCREEN_WIDTH = 640 ;
+//    private static final int SCREEN_HEIGHT = 480;
 
 
     private final String map1 = "resources/map1.csv";
@@ -86,7 +92,7 @@ public class GameWorld extends JPanel {
                     m.update(gameWorld.explorer);
 
                     if (m.patrol(gameWorld.explorer)) {
-//                        gameWorld.soundPlayer.playSound(m);
+                        gameWorld.soundPlayer.playSound(m);
                     }
                     gameWorld.checkCollision(m);
 
@@ -207,6 +213,7 @@ public class GameWorld extends JPanel {
             buttonStart = read(new File("resources/Button_start.gif"));
             buttonQuit = read(new File("resources/Button_quit.gif"));
             buttonScores = read(new File("resources/Button_scores.gif"));
+            background1 = read(new File("resources/Background1.bmp"));
 
 
             congratulation = read(new File("resources/Congratulation.gif"));
@@ -328,7 +335,7 @@ public class GameWorld extends JPanel {
 
 
         //startScreen setup
-        startScreen = new TitlePage(this.jf, buttonStart, buttonLoad, buttonHelp, buttonScores, buttonQuit);
+        startScreen = new TitlePage(this.jf, buttonStart, buttonLoad, buttonHelp, buttonScores, buttonQuit,background1);
         startScreen.setUp();
 
 

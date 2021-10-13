@@ -52,19 +52,15 @@ public class SoundPlayer {
 
 
         AudioInputStream audioInputStream;
-//
+
         if (g instanceof Monsters) {
             audioInputStream = AudioSystem.getAudioInputStream(new File("resources/Beetle.wav"));
-
         } else {
             audioInputStream = AudioSystem.getAudioInputStream(new File("resources/Beetle.wav"));
-
         }
         Clip clip = AudioSystem.getClip();
         clip.open(audioInputStream);
         clip.start();
-
-
     }
 
 }

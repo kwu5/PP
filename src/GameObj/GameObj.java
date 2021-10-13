@@ -52,7 +52,7 @@ public abstract class GameObj {
     public void drawImage(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(currentImg, x, y, null);
-//        g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
+        g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
     }
 
     public abstract void update();
