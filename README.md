@@ -57,4 +57,4 @@ git clone https://github.com/kwu5/PP.git
 
 ## Requirements
 
-Java JDK16 and above.
+Java JDK16 or above.
