@@ -24,7 +24,7 @@ Only by keeping your wits about you can you hope to unravel the secrets of the g
   - Mummies move in all directions. 
   
  
-- The pyramid also contains **_scarabs_** that you can use to make the mummies temporarily vulnerable. 
+- The pyramid also contains **_scarabs_** that you can use to make the mummies temporarily vulnerable. **_Potion_** can heal you and gain **_treasure_** will increase your score in-game.
   - When a mummy is chasing you , activing a scarab can *immediately make it flee in opposition direction*.
   
   
@@ -42,7 +42,7 @@ Only by keeping your wits about you can you hope to unravel the secrets of the g
 
 ## Download
 
-I use intellij to implement this game.
+**Intellij**:
 
 1. Clone the project from github using. Or you can download its ZIP file. 
 ```
@@ -50,7 +50,11 @@ git clone https://github.com/kwu5/PP.git
 ```
 2. In IDE, Run `GameWorld` to start the game.
 
+**Jar file**:
+1. Download the 'PyramidPanic_jar' folder which includes the .Jar file. 
+    > .\PP\out\artifacts
+3. Run 'PyramidPanic.jar' in environment with Java JDK16 and above. 
 
 ## Requirements
 
-Java JDK16
+Java JDK16 and above.
