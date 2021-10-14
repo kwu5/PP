@@ -18,7 +18,6 @@ public class NormalBlock extends Block {
 
     @Override
     public void backToStartPt(Explorer explorer) {
-//
     }
 
     @Override

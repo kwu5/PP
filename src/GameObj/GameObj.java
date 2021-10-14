@@ -13,7 +13,7 @@ public abstract class GameObj {
         this.x = x;
         this.y = y;
         this.currentImg = currentImg;
-        rect = new Rectangle(x+5, y+5, currentImg.getWidth() - 5, currentImg.getHeight() - 5);
+        rect = new Rectangle(x + 5, y + 5, currentImg.getWidth() - 5, currentImg.getHeight() - 5);
 
     }
 
@@ -43,7 +43,6 @@ public abstract class GameObj {
         return rect;
     }
 
-    ;
 
     public void updateRect() {
         rect.setLocation(x, y);
@@ -52,13 +51,18 @@ public abstract class GameObj {
     public void drawImage(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(currentImg, x, y, null);
-        g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
+//        g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
     }
 
     public abstract void update();
 
     public abstract void update(Explorer explorer);
 
+    /**
+     * Reaction to collision
+     *
+     * @param gameObj
+     */
     public abstract void collision(GameObj gameObj);
 
 

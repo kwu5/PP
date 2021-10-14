@@ -10,7 +10,7 @@ public class TitlePage extends SoundPlayer {
     private static final int SCREEN_WIDTH = 640;
     private static final int SCREEN_HEIGHT = 480;
 
-    BufferedImage startImg, loadImg, helpImg, scoresImg, quitImg,startScreenImg;
+    BufferedImage startImg, loadImg, helpImg, scoresImg, quitImg, startScreenImg;
     JFrame mainJF;
 
     JFrame startScreen = new JFrame("Start");
@@ -44,7 +44,6 @@ public class TitlePage extends SoundPlayer {
 
         start.addActionListener(listener -> {
             try {
-                System.out.println("listener");
                 this.playSound("click");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -67,36 +66,29 @@ public class TitlePage extends SoundPlayer {
 
         JPanel jPanel = new JPanel();
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.PAGE_AXIS));
-//
-        JPanel FixedPanel = new JPanel(new GridBagLayout()){
+        jPanel.setBackground(new Color(0, 0, 0, 0));
+        jPanel.setPreferredSize(new Dimension(100, 500));
+
+
+        JPanel FixedPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 g.drawImage(startScreenImg, 0, 0, null);
-//                System.out.println(startScreenImg.getWidth() + "    "+startScreenImg.getHeight());
             }
         };
 
 
-
         FixedPanel.setPreferredSize(new Dimension(500, 500));
+        FixedPanel.setOpaque(false);
 
-        jPanel.setPreferredSize(new Dimension(100, 100));
 
         jPanel.add(start);
         jPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         jPanel.add(quit);
-//        jPanel.setBackground(Color.);
+
 
         FixedPanel.add(jPanel);
-
-
-
-
-
-
-
-
 
 
         startScreen.add(FixedPanel);
@@ -110,7 +102,6 @@ public class TitlePage extends SoundPlayer {
         startScreen.setLocationRelativeTo(null);
         startScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         startScreen.setVisible(true);
-//        startScreen.add(jPanel);
 
 
     }

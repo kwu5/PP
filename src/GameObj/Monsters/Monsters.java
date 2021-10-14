@@ -24,28 +24,25 @@ public abstract class Monsters extends GameObj {
     final char RIGHT = 'r';
 
     public char facingdirc;
-//    Explorer e ;
 
     protected Monsters(int x, int y, BufferedImage img) {
         super(x, y, img);
-//        this.e = e;
         this.speed = normalSpeed;
 
 
     }
 
 
-//    public abstract BufferedImage getCurrentImg();
-
     /**
-     * check if explorer is in sight and react to it
+     * Check if explorer is in sight and react to it
      */
     public abstract boolean patrol(Explorer explorer);
 
     /**
-     * handle moving action
+     * Handle moving action
      */
     protected abstract void move();
+
 
     protected void moveUp(BufferedImage upImg) {
         this.currentImg = upImg;
@@ -88,15 +85,17 @@ public abstract class Monsters extends GameObj {
             default:
                 System.out.println("MoveOpposite: invalid direction");
         }
-//        System.out.println(facingdirc);
 
     }
 
+    /**
+     * Monster reaction to collision
+     *
+     * @param g
+     */
     @Override
     public void collision(GameObj g) {
-//        if(g instanceof Wall || g instanceof Monsters || g instanceof Block || g instanceof Door)
         if (g instanceof Wall || g instanceof Block || g instanceof Door) {
-//            System.out.println(g.getClass().getName()+ "move opposite");
             moveOpposite();
         }
     }

@@ -9,9 +9,9 @@ import java.awt.image.BufferedImage;
 public class Mummy extends Monsters {
 
     private BufferedImage mummiesUp, mummiesDown, mummiesLeft, mummiesRight;
-    final int points = 300;
     private boolean explorerInSight, isFlee;
-    private char explorerDir;
+
+
     private int rangeX1, rangeX2, rangeY1, rangeY2;
     private Rectangle movingArea;
 
@@ -51,6 +51,7 @@ public class Mummy extends Monsters {
                 }
             }
         } else if (((e.getY() + e.getRect().getHeight()) > this.y) && ((e.getY() < (this.y + this.currentImg.getHeight())))) {
+
             //in hunting area
             if (e.getX() >= rangeX1 && e.getX() <= rangeX2) {
                 if ((e.getX() < this.x && facingdirc == LEFT) || (e.getX() > this.x && facingdirc == RIGHT)) {
@@ -88,9 +89,6 @@ public class Mummy extends Monsters {
 
     }
 
-    public int getPoints() {
-        return points;
-    }
 
     private char getRandomDirection() {
         int rand = (int) (Math.random() * 500) + 1;
@@ -158,7 +156,7 @@ public class Mummy extends Monsters {
     @Override
     public void drawImage(Graphics g) {
         super.drawImage(g);
-        g.drawRect(rangeX1, rangeY1, rangeX2, rangeY2);
+//        g.drawRect(rangeX1, rangeY1, rangeX2, rangeY2);
 
     }
 }

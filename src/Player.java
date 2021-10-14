@@ -10,15 +10,12 @@ import java.awt.image.BufferedImage;
 
 public class Player extends SoundPlayer {
 
-    //    private BufferedImage exImg;
     private boolean scarabsActive, unlockDoor;
     private int lives, score, scarabsNum;
     final int liveMax = 3;
 
-//    private Explorer e;
 
-
-    public Player(int lives, Explorer e) {
+    public Player(int lives) {
         this.lives = lives;
 
 
@@ -50,23 +47,19 @@ public class Player extends SoundPlayer {
         if (lives < liveMax) lives++;
     }
 
-//    public void gainSword() {
-//        swordGained = true;
-//    }
 
     public void gainScarabs() {
-        System.out.println("gainScarabs");
+//        System.out.println("gainScarabs");
         scarabsNum++;
     }
 
-//    public boolean isSwordGained() {
-//        return swordGained;
-//    }
-//
-//    public boolean isUnlockDoor(){
-//        return unlockDoor;
-//    }
 
+    /**
+     * Update player state after collision
+     *
+     * @param g
+     * @param e
+     */
     public void collision(GameObj g, Explorer e) {
         if (g instanceof Monsters) {
 //            if(g instanceof Mummy && e.isSwordEquipped()){

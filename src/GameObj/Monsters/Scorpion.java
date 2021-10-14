@@ -47,7 +47,6 @@ public class Scorpion extends Monsters {
 
     @Override
     protected void move() {
-//        System.out.println(facingdirc);
         if (facingdirc == LEFT) moveLeft(leftImg);
         else if (facingdirc == RIGHT) moveRight(rightImg);
         else System.out.println("Invalid direction:" + this.getClass());

@@ -16,9 +16,6 @@ public class HorBlock extends Block {
 
     }
 
-//    public int getRangeX1(){return rangeX1;}
-//    public int getRangeX2(){return rangeX2;}
-
 
     @Override
     public boolean isOutOfRange() {

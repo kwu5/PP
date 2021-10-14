@@ -13,7 +13,7 @@ public class Explorer extends GameObj {
     private int imgWidth, imgHeight;
     private BufferedImage exUpImg, exDownImg, exLeftImg, exRightImg;
 
-    private Rectangle exRect;
+    //    private Rectangle exRect;
     private float speed;
 
     private boolean isSwordEquipped, isWieldingSword, isScarabsActive, isSwordActive;
@@ -27,7 +27,6 @@ public class Explorer extends GameObj {
         super(x, y, exUp);
 
         this.speed = speed;
-//        this.normalSpeed = speed;
         this.isSwordEquipped = false;
         this.isScarabsActive = false;
 
@@ -40,7 +39,7 @@ public class Explorer extends GameObj {
         this.imgHeight = exUpImg.getHeight();
         this.imgWidth = exUpImg.getWidth();
 
-        this.exRect = new Rectangle(x + 100, y + 100, imgWidth - 100, imgHeight - 100);
+//        this.exRect = new Rectangle(x + 100, y + 100, imgWidth - 100, imgHeight - 100);
 
 
     }
@@ -120,7 +119,6 @@ public class Explorer extends GameObj {
     }
 
     public void setScarabsActive(boolean isScarabsActive) {
-//        System.out.println("setScarabsActive: " + isScarabsActive);
         this.isScarabsActive = isScarabsActive;         //try to active, not guarantee successful
     }
 
@@ -163,8 +161,12 @@ public class Explorer extends GameObj {
     }
 
 
+    /**
+     * Explorer reaction to blocks
+     *
+     * @param block
+     */
     private void collisionBlock(Block block) {
-//        speed = block.getSpeed();
         if (block instanceof NormalBlock) {
             moveBack();
         } else if (block instanceof HorBlock) {
@@ -181,7 +183,7 @@ public class Explorer extends GameObj {
 
 
     /**
-     * explorer collision
+     * Explorer reaction to collision except blocks
      *
      * @param g
      */

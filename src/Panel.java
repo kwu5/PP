@@ -9,7 +9,6 @@ public class Panel {
     private int x, y;
     final int screenWidth, screenHeight;
     private BufferedImage image, liveImg, scarabsImg;
-    //    private Player player  ;
     private int lives, scarabsNum, score;
 
     public Panel(int screenWidth, int screenHeight, BufferedImage panelimg, BufferedImage liveImg,

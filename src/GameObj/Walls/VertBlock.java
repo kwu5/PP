@@ -23,7 +23,7 @@ public class VertBlock extends Block {
     @Override
     public void move(Explorer explorer) {
 
-        //moveback
+        //moveBack
         if (this.y - rangeY1 < 0) {
 //            System.out.println("moveback-d");
             pushDown(explorer.getSpeed());
@@ -46,10 +46,8 @@ public class VertBlock extends Block {
         }
     }
 
-    //    @Override
+
     public void backToStartPt(Explorer explorer) {
-
-
         if (!backToStartRect.intersects(explorer.getRect())) {
             if (this.y != startY) {
                 if (this.y < startY) pushDown(speed);

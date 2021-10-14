@@ -13,11 +13,7 @@ public class Wall extends GameObj {
 
     }
 
-    /**
-     * wall vs N/A
-     *
-     * @param g
-     */
+
     @Override
     public void collision(GameObj g) {
     }
