@@ -48,7 +48,8 @@ Only by keeping your wits about you can you hope to unravel the secrets of the g
 ```
 git clone https://github.com/kwu5/PP.git
 ```
-2. In IDE, Run `GameWorld` to start the game.
+2. In IDE, use 'GameWorld' as main class and JDK16 or above in configuration. 
+3. Run `GameWorld` to start the game.
 
 
 ## Requirements
