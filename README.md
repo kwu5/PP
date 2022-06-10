@@ -50,10 +50,6 @@ git clone https://github.com/kwu5/PP.git
 ```
 2. In IDE, Run `GameWorld` to start the game.
 
-**Jar file**:
-1. Download the 'PyramidPanic_jar' folder which includes the .Jar file. 
-    > .\PP\out\artifacts
-3. Run 'PyramidPanic.jar' in environment with Java JDK16 and above. 
 
 ## Requirements
 
